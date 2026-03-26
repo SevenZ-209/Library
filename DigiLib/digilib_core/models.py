@@ -1,7 +1,15 @@
+from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-# Create your models here.
+
+class BaseModel(models.Model):
+    active = models.BooleanField(default=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    class Meta:
+        abstract = True
+
 class User(AbstractUser):
     ROLE_CHOICES = (
         ('reader', 'Độc giả'),
@@ -10,30 +18,32 @@ class User(AbstractUser):
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='reader')
     phone = models.CharField(max_length=15, null=True, blank=True)
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    avatar = CloudinaryField(null=True)
 
     def __str__(self):
         return self.username
-class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(null=True, blank=True)
+
+class Tag(BaseModel):
+    name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
 
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
-class Book(models.Model):
+    def __str__(self):
+        return self.name
+
+class Book(BaseModel):
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='books')
     description = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to='books/', null=True, blank=True)
+    image = CloudinaryField(null=True, blank=True)
 
     total_copies = models.IntegerField(default=1)
     available_copies = models.IntegerField(default=1)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
