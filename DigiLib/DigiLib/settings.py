@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 from django.conf.global_settings import AUTH_USER_MODEL
@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +41,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'digilib_core.apps.DigilibCoreConfig',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CKEDITOR_UPLOAD_PATH = 'uploads/ckeditors'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,6 +80,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'DigiLib.wsgi.application'
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+cloudinary.config(
+    cloud_name='dgpiotsmt',
+    api_key='641336261286631',
+    api_secret='9IM8MLY8s6Y4Pj6deAJZv6_FhJU',
+    secure=True,
+    api_proxy="http://proxy.server:3128"
+)
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
@@ -91,6 +111,28 @@ DATABASES = {
     }
 }
 
+JAZZMIN_SETTINGS = {
+    "site_title": "DigiLib Admin",
+
+    "site_header": "Hệ thống DigiLib",
+
+    "site_brand": "Quản lý Thư viện",
+
+    "welcome_sign": "Chào mừng đến với hệ thống quản trị DigiLib",
+
+    "copyright": "Khoa Le",
+
+    "search_model": ["auth.User", "digilib_core.Book"],
+
+    "custom_links": {
+        "digilib_core": [{
+            "name": "Báo cáo Thống kê",
+            "url": "library-stats/",
+            "icon": "fas fa-chart-pie",
+        }]
+    },
+    "show_ui_builder": True,
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

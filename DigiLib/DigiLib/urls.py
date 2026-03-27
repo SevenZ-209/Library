@@ -15,10 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+
+from digilib_core.admin import stats_view
 
 urlpatterns = [
+    path('admin/library-stats/', admin.site.admin_view(stats_view), name='library_stats'),
     path('admin/', admin.site.urls),
     path('', include('digilib_core.urls')),
-
+    re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
 ]
