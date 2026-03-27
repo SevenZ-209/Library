@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'digilib_core.apps.DigilibCoreConfig',
     'ckeditor',
     'ckeditor_uploader',
+    'rest_framework',
+    'drf_yasg',
 ]
 
 MEDIA_URL = '/media/'
@@ -134,6 +136,10 @@ JAZZMIN_SETTINGS = {
     "show_ui_builder": True,
 }
 
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': 'rest_framework.pagination.PageNumberPagination',
+#     'PAGE_SIZE': 6,
+# }
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
