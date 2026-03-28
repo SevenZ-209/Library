@@ -1,3 +1,4 @@
+from ckeditor_uploader.fields import RichTextUploadingField
 from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -39,8 +40,9 @@ class Book(BaseModel):
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='books')
-    description = models.TextField(null=True, blank=True)
+    description = RichTextUploadingField(null=True, blank=True)
     image = CloudinaryField(null=True, blank=True)
+    tags = models.ManyToManyField(Tag, blank=True, related_name='books')
 
     total_copies = models.IntegerField(default=1)
     available_copies = models.IntegerField(default=1)
