@@ -90,8 +90,6 @@ cloudinary.config(
     cloud_name='dgpiotsmt',
     api_key='641336261286631',
     api_secret='9IM8MLY8s6Y4Pj6deAJZv6_FhJU',
-    secure=True,
-    api_proxy="http://proxy.server:3128"
 )
 
 # Database
@@ -136,11 +134,11 @@ JAZZMIN_SETTINGS = {
     "show_ui_builder": True,
 }
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': 'rest_framework.pagination.PageNumberPagination',
-#     'PAGE_SIZE': 6,
-# }
-# Password validation
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [

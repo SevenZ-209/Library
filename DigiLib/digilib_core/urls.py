@@ -7,6 +7,8 @@ from . import views
 r = DefaultRouter()
 r.register('category', views.CategoryView, basename='category')
 r.register('book', views.BookView, basename='book')
+r.register('tag', views.TagView, basename='tag')
+r.register('user', views.UserView, basename='user')
 
 urlpatterns = [
     path('', include(r.urls)),

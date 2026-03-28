@@ -2,11 +2,11 @@ from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework import viewsets, generics, permissions, status
+from rest_framework import viewsets, generics, permissions, status, parsers
 from rest_framework.decorators import action
 
 from digilib_core import serializers, paginators
-from digilib_core.models import Category, Book
+from digilib_core.models import Category, Book, User, Tag
 from digilib_core.permissions import IsLibrarianOrAdmin
 
 
@@ -92,3 +92,23 @@ class BookView(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView,
             'borrowed_books': borrowed_books,
             'overdue_books': overdue_books
         }, status=status.HTTP_200_OK)
+
+class UserView(viewsets.ViewSet, generics.CreateAPIView):
+    queryset = User.objects.filter(is_active=True)
+    serializer_class = serializers.UserSerializer
+    parser_classes = [parsers.MultiPartParser]
+
+    @action(methods=['get', 'patch'], url_path='current-user', detail=False,
+            permission_classes=[permissions.IsAuthenticated])
+    def get_current_user(self, request):
+        user = request.user
+        if request.method.__eq__('PATCH'):
+            s = serializers.UserSerializer(user, data=request.data, partial=True)
+            s.is_valid(raise_exception=True)
+            s.save()
+
+        return Response(serializers.UserSerializer(user).data, status=status.HTTP_200_OK)
+
+class TagView(viewsets.ViewSet, generics.ListAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = serializers.TagSerializer
