@@ -28,10 +28,12 @@ class Command(BaseCommand):
 
         self.stdout.write('Đang tạo Tags...')
         tag_names = ['Sách mới', 'Bán chạy', 'Kinh điển', 'Tham khảo', 'Nổi bật']
+        tag_objs = []
         for tag_name in tag_names:
-            Tag.objects.get_or_create(name=tag_name)
+            tag, _ = Tag.objects.get_or_create(name=tag_name)
+            tag_objs.append(tag)
 
-        self.stdout.write('Đang tạo 50 cuốn sách...')
+        self.stdout.write('Đang tạo 50 cuốn sách và gắn Tag ngẫu nhiên...')
         books = []
         for _ in range(50):
             total = random.randint(5, 20)
@@ -43,6 +45,10 @@ class Command(BaseCommand):
                 total_copies=total,
                 available_copies=random.randint(0, total),
             )
+
+            random_tags = random.sample(tag_objs, k=random.randint(1, 3))
+            book.tags.set(random_tags)
+
             books.append(book)
 
         self.stdout.write('Đang tạo 100 phiếu mượn...')
@@ -72,10 +78,9 @@ class Command(BaseCommand):
                 note=fake.sentence() if random.random() > 0.5 else ''
             )
 
-
             BorrowRecord.objects.filter(id=br.id).update(
                 borrow_date=fake_borrow_date,
                 return_date=fake_return_date
             )
 
-        self.stdout.write(self.style.SUCCESS('🎉 HOÀN TẤT! Dữ liệu đã khớp 100% với Database.'))
+        self.stdout.write(self.style.SUCCESS('🎉 HOÀN TẤT! Đã gán Tag thành công cho toàn bộ Sách.'))
