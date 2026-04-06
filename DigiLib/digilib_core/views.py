@@ -18,7 +18,7 @@ class CategoryView(viewsets.ViewSet, generics.ListAPIView):
     serializer_class = serializers.CategorySerializer
     permission_classes = [permissions.AllowAny]
 
-class BookView(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
+class BookView(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView, generics.DestroyAPIView):
     queryset = Book.objects.select_related('category').filter(active=True).order_by('-id')
     pagination_class = paginators.BookPagination
 
@@ -41,6 +41,17 @@ class BookView(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView,
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, pk=None):
+        book = self.get_object()
+
+        serializer = self.get_serializer(book, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
