@@ -1,13 +1,18 @@
+from datetime import timedelta
+
+from django.db import transaction
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework import viewsets, generics, permissions, status, parsers
 from rest_framework.decorators import action
 
 from digilib_core import serializers, paginators
-from digilib_core.models import Category, Book, User, Tag
+from digilib_core.models import Category, Book, User, Tag, BorrowRecord
 from digilib_core.permissions import IsLibrarianOrAdmin
+from digilib_core.serializers import BorrowRecordSerializer
 
 
 def index(request):
@@ -18,7 +23,7 @@ class CategoryView(viewsets.ViewSet, generics.ListAPIView):
     serializer_class = serializers.CategorySerializer
     permission_classes = [permissions.AllowAny]
 
-class BookView(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
+class BookView(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView, generics.DestroyAPIView):
     queryset = Book.objects.select_related('category').filter(active=True).order_by('-id')
     pagination_class = paginators.BookPagination
 
@@ -41,6 +46,17 @@ class BookView(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView,
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, pk=None):
+        book = self.get_object()
+
+        serializer = self.get_serializer(book, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
@@ -112,3 +128,74 @@ class UserView(viewsets.ViewSet, generics.CreateAPIView):
 class TagView(viewsets.ViewSet, generics.ListAPIView):
     queryset = Tag.objects.all()
     serializer_class = serializers.TagSerializer
+
+class BorrowRecordViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
+    queryset = BorrowRecord.objects.all()
+    serializer_class = BorrowRecordSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role in ['librarian', 'admin']:
+            return self.queryset.order_by('-borrow_date')
+        return self.queryset.filter(user=user).order_by('-borrow_date')
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        book_id = request.data.get('book_id')
+
+        try:
+
+            book = Book.objects.select_for_update().get(id=book_id)
+        except Book.DoesNotExist:
+            return Response({"detail": "Sách không tồn tại."}, status=status.HTTP_404_NOT_FOUND)
+
+        if book.available_copies <= 0:
+            return Response({"detail": "Sách này đã hết bản có sẵn để mượn."}, status=status.HTTP_400_BAD_REQUEST)
+
+        existing_borrow = BorrowRecord.objects.filter(
+            user=user, book=book, status__in=['borrowed', 'overdue']
+        ).exists()
+
+        if existing_borrow:
+            return Response({"detail": "Bạn đang mượn cuốn sách này rồi."}, status=status.HTTP_400_BAD_REQUEST)
+
+        book.available_copies -= 1
+        book.save()
+
+        due_date = timezone.now() + timedelta(days=14)
+        record = BorrowRecord.objects.create(
+            user=user,
+            book=book,
+            due_date=due_date,
+            status='borrowed'
+        )
+
+        serializer = self.get_serializer(record)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'], url_path='return', permission_classes=[IsLibrarianOrAdmin])
+    @transaction.atomic
+    def return_book(self, request, pk=None):
+        try:
+            record = BorrowRecord.objects.select_for_update().get(pk=pk)
+        except BorrowRecord.DoesNotExist:
+            return Response({"detail": "Không tìm thấy phiếu mượn."}, status=status.HTTP_404_NOT_FOUND)
+
+        if record.status == 'returned':
+            return Response({"detail": "Sách này đã được duyệt trả trước đó rồi."}, status=status.HTTP_400_BAD_REQUEST)
+
+        book = Book.objects.select_for_update().get(id=record.book.id)
+
+        record.status = 'returned'
+        record.return_date = timezone.now()
+        record.save()
+
+        book.available_copies += 1
+        book.save()
+
+        return Response({
+            "detail": "Đã duyệt trả sách thành công.",
+            "book_available_copies": book.available_copies
+        }, status=status.HTTP_200_OK)
