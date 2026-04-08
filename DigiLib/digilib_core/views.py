@@ -145,8 +145,31 @@ class BorrowRecordViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
         user = request.user
         book_id = request.data.get('book_id')
 
-        try:
+        has_overdue = BorrowRecord.objects.filter(
+            user=user,
+            status__in=['borrowed', 'overdue'],
+            due_date__lt=timezone.now()
+        ).exists()
 
+        if has_overdue:
+            return Response(
+                {"detail": "Tài khoản của bạn đang có sách quá hạn. Vui lòng trả sách trước khi mượn thêm!"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+
+        active_borrows_count = BorrowRecord.objects.filter(
+            user=user,
+            status='borrowed'
+        ).count()
+
+        if active_borrows_count >= 3:
+            return Response(
+                {"detail": "Bạn đã đạt giới hạn mượn tối đa (3 cuốn). Vui lòng trả sách cũ để được mượn tiếp!"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        try:
             book = Book.objects.select_for_update().get(id=book_id)
         except Book.DoesNotExist:
             return Response({"detail": "Sách không tồn tại."}, status=status.HTTP_404_NOT_FOUND)

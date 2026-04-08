@@ -2,6 +2,8 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Q, F, CheckConstraint
+from rest_framework.exceptions import ValidationError
 
 
 class BaseModel(models.Model):
@@ -49,6 +51,26 @@ class Book(BaseModel):
 
     def __str__(self):
         return self.title
+
+    def clean(self):
+        if self.available_copies > self.total_copies:
+            raise ValidationError({
+                'available_copies': 'Số bản có sẵn tuyệt đối không được lớn hơn tổng số bản sách!'
+            })
+        if self.available_copies < 0 or self.total_copies < 0:
+            raise ValidationError('Số lượng sách không được là số âm!')
+
+    class Meta:
+        constraints = [
+            CheckConstraint(
+                condition=Q(available_copies__lte=F('total_copies')),
+                name='check_available_lte_total'
+            ),
+            CheckConstraint(
+                condition=Q(available_copies__gte=0) & Q(total_copies__gte=0),
+                name='check_positive_copies'
+            )
+        ]
 
 class BorrowRecord(models.Model):
     STATUS_CHOICES = (
