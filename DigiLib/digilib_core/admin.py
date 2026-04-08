@@ -10,7 +10,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'category', 'created_date', 'active')
+    list_display = ('id','title', 'author', 'category', 'created_date', 'active')
     search_fields = ['title']
     list_filter = ['category', 'tags', 'active']
     readonly_fields =  ['image_view']
