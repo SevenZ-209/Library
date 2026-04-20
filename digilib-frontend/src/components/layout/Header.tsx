@@ -15,9 +15,8 @@ export function Header() {
   ];
 
   return (
-    <header className="glass-header fixed top-0 z-50 w-full" style={{ viewTransitionName: 'site-header' }}>
+    <header className="glass-header fixed top-0 z-50 w-full pointer-events-auto" style={{ viewTransitionName: 'site-header' }}>
       <div className="flex justify-between items-center px-8 h-20 max-w-screen-2xl mx-auto">
-        {/* Brand Logo */}
         <Link
           to="/"
           className="text-2xl font-headline font-extrabold tracking-tighter text-primary hover:opacity-80 transition-opacity"
@@ -25,7 +24,6 @@ export function Header() {
           DigiLib
         </Link>
 
-        {/* Navigation Links */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link
@@ -43,7 +41,6 @@ export function Header() {
           ))}
         </nav>
 
-        {/* Actions */}
         <div className="flex items-center gap-4">
           <button
             aria-label="Thông báo"
@@ -52,13 +49,23 @@ export function Header() {
             <span className="material-symbols-outlined">notifications</span>
           </button>
 
+          {isAuthenticated && user && (user.role === 'admin' || user.role === 'librarian') && (
+            <Link
+              to="/admin"
+              className="hidden md:flex items-center gap-2 bg-primary-container/20 text-primary px-4 py-2 rounded-full text-sm font-bold font-[family-name:var(--font-label)] hover:bg-primary/20 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+              Trang Quản Trị
+            </Link>
+          )}
+
           {isAuthenticated && user ? (
             <Link
               to="/profile"
               className="flex items-center gap-2 p-1 rounded-full border-2 border-primary/20 hover:border-primary transition-all duration-300"
             >
               <span className="material-symbols-outlined text-3xl text-primary">
-                {user.avatar ? 'account_circle' : 'account_circle'}
+                account_circle
               </span>
             </Link>
           ) : (

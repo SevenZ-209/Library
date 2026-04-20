@@ -5,8 +5,9 @@ import { Badge } from '@/components/ui/Badge';
 import { BookCardSkeleton } from '@/components/ui/Skeleton';
 import { useAuthStore } from '@/stores/authStore';
 import { useUIStore } from '@/stores/uiStore';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getImageUrl } from '@/lib/utils';
 import type { Book, BorrowRecord } from '@/types/book.types';
+
 import '@/styles/view-transitions.css';
 
 export default function BookDetailPage() {
@@ -17,6 +18,7 @@ export default function BookDetailPage() {
 
   const [book, setBook] = useState<Book | null>(null);
   const [relatedBooks, setRelatedBooks] = useState<Book[]>([]);
+  const [hasBorrowed, setHasBorrowed] = useState(false);
   const [borrowHistory, setBorrowHistory] = useState<BorrowRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isBorrowing, setIsBorrowing] = useState(false);
@@ -56,9 +58,11 @@ export default function BookDetailPage() {
     try {
       setIsBorrowing(true);
       await bookService.borrowBook(book.id);
-      addToast('Yêu cầu mượn đã được gửi!', 'success');
-    } catch {
-      addToast('Không thể gửi yêu cầu mượn. Vui lòng thử lại.', 'error');
+      addToast('Giữ chỗ thành công! Vui lòng đến quầy nhận sách trong 24h.', 'success');
+      setHasBorrowed(true);
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.detail || 'Không thể gửi yêu cầu mượn. Vui lòng thử lại.';
+      addToast(errorMsg, 'error');
     } finally {
       setIsBorrowing(false);
     }
@@ -108,7 +112,7 @@ export default function BookDetailPage() {
           >
             {book.image ? (
               <img
-                src={book.image}
+                src={getImageUrl(book.image)}
                 alt={book.title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
@@ -164,7 +168,7 @@ export default function BookDetailPage() {
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
             <button
               onClick={handleBorrow}
-              disabled={book.available_copies === 0 || isBorrowing}
+              disabled={book.available_copies === 0 || isBorrowing || hasBorrowed}
               className="w-full sm:w-auto px-10 py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary font-headline font-bold rounded-full shadow-lg hover:shadow-primary/20 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isBorrowing ? (
@@ -172,9 +176,14 @@ export default function BookDetailPage() {
                   <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
                   Đang xử lý...
                 </>
+              ) : hasBorrowed ? (
+                <>
+                  <span className="material-symbols-outlined text-sm">check_circle</span>
+                  Đã giữ chỗ
+                </>
               ) : (
                 <>
-                  {book.available_copies > 0 ? 'Mượn sách' : 'Đặt chỗ'}
+                  {book.available_copies > 0 ? 'Mượn sách' : 'Hết sách'}
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </>
               )}

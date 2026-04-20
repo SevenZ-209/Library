@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import type { Book } from '@/types/book.types';
 import { Badge } from '@/components/ui/Badge';
-import { getAvailabilityStatus } from '@/lib/utils';
+import { getAvailabilityStatus, getImageUrl } from '@/lib/utils';
+
 
 interface BookCardProps {
   book: Book;
@@ -35,9 +36,9 @@ export function BookCard({ book, index = 0 }: BookCardProps) {
         style={{ viewTransitionName: `book-cover-${book.id}` }}
       >
         <div className="aspect-[3/4] overflow-hidden rounded-lg mb-4 bg-surface-container relative">
-          {book.image ? (
+        {book.image ? (
             <img
-              src={book.image}
+              src={getImageUrl(book.image)}
               alt={book.title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
@@ -78,8 +79,8 @@ export function BookCard({ book, index = 0 }: BookCardProps) {
       {/* Action Button */}
       <Link to={`/book/${book.id}`}>
         <button className="mt-4 w-full py-3 rounded-full bg-surface-container-high hover:bg-primary hover:text-white transition-all duration-300 font-[family-name:var(--font-label)] text-sm font-semibold flex items-center justify-center gap-2">
-          <span className="material-symbols-outlined text-lg">import_contacts</span>
-          {book.available_copies > 0 ? 'Đọc ngay' : 'Thông báo tôi'}
+          <span className="material-symbols-outlined text-lg">visibility</span>
+          Xem chi tiết
         </button>
       </Link>
     </article>

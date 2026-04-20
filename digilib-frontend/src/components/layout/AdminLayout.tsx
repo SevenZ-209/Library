@@ -1,15 +1,15 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/utils';
-
 const navItems = [
-  { path: '/admin', icon: 'dashboard', label: 'Dashboard' },
-  { path: '/admin/books', icon: 'menu_book', label: 'Books' },
-  { path: '/admin/users', icon: 'group', label: 'Users', adminOnly: true },
+  { path: '/admin', icon: 'dashboard', label: 'Tổng quan' },
+  { path: '/admin/books', icon: 'menu_book', label: 'Quản lý Sách' },
 ];
+
 
 export function AdminLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, logout } = useAuthStore();
 
   return (
@@ -17,8 +17,8 @@ export function AdminLayout() {
       {/* Sidebar */}
       <aside className="w-64 bg-teal-50 flex flex-col py-8 px-4 border-r border-teal-100/10 fixed left-0 top-0 bottom-0 z-40">
         {/* Logo */}
-        <div className="mb-10 px-2 flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+        <Link to="/" className="mb-10 px-2 flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
+          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-md">
             <span className="material-symbols-outlined text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
               library_books
             </span>
@@ -27,16 +27,15 @@ export function AdminLayout() {
             <h1 className="font-headline font-extrabold text-2xl text-teal-900 tracking-tight">
               DigiLib
             </h1>
-            <p className="text-[10px] uppercase tracking-widest text-teal-700/60 font-bold font-[family-name:var(--font-label)]">
-              The Curated Archive
+            <p className="text-[10px] uppercase tracking-widest text-primary font-bold font-[family-name:var(--font-label)]">
+              Quay lại Trang chủ
             </p>
           </div>
-        </div>
+        </Link>
 
         {/* Nav */}
         <nav className="flex-1 space-y-1">
           {navItems.map((item) => {
-            if (item.adminOnly && user?.role !== 'admin') return null;
             const isActive = location.pathname === item.path;
             return (
               <Link
@@ -108,29 +107,36 @@ export function AdminLayout() {
             </div>
 
             {/* User info */}
+            {/* User info */}
             <div className="flex items-center gap-4">
-              <button className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-teal-50 transition-colors relative">
-                <span className="material-symbols-outlined">notifications</span>
-                <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full ring-2 ring-teal-50" />
-              </button>
-              <button className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-teal-50 transition-colors">
-                <span className="material-symbols-outlined">settings</span>
-              </button>
-              <div className="flex items-center gap-3 pl-4 border-l border-teal-100/50">
-                <div className="text-right">
+              <Link 
+                to="/" 
+                className="hidden md:flex items-center gap-2 text-primary bg-primary/10 hover:bg-primary/20 px-4 py-2 rounded-full transition-colors mr-2 text-sm font-bold font-[family-name:var(--font-label)]"
+              >
+                <span className="material-symbols-outlined text-[18px]">public</span>
+                Xem trang web
+              </Link>
+
+              
+              {/* Khu vực User Profile - Click để vào trang cá nhân */}
+              <button 
+                onClick={() => navigate('/profile')}
+                className="flex items-center gap-3 pl-4 border-l border-teal-100/50 hover:opacity-70 transition-opacity text-left cursor-pointer"
+              >
+                <div className="hidden sm:block">
                   <p className="text-xs font-bold text-teal-900 leading-none font-[family-name:var(--font-label)]">
                     {user?.first_name} {user?.last_name}
                   </p>
                   <p className="text-[10px] text-slate-500 mt-1 capitalize font-[family-name:var(--font-label)]">
-                    {user?.role || 'System Admin'}
+                    {user?.role === 'librarian' ? 'Thủ thư' : user?.role || 'Admin'}
                   </p>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center">
-                  <span className="text-xs font-bold text-primary">
+                <div className="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center shadow-sm">
+                  <span className="text-xs font-bold text-primary uppercase">
                     {user?.first_name?.[0]}{user?.last_name?.[0]}
                   </span>
                 </div>
-              </div>
+              </button>
             </div>
           </div>
         </header>

@@ -5,14 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="750a606d-862b-4314-aed9-2bfef07730d5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Library.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Library.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DigiLib/DigiLib/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/DigiLib/DigiLib/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DigiLib/digilib_core/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/DigiLib/digilib_core/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DigiLib/digilib_core/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/DigiLib/digilib_core/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DigiLib/digilib_core/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/DigiLib/digilib_core/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/digilib-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/src/components/admin/StatsGrid.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/src/components/admin/StatsGrid.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/src/components/books/BookCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/src/components/books/BookCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/src/components/layout/AdminLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/src/components/layout/AdminLayout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/src/components/layout/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/src/components/layout/Header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/src/lib/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/src/pages/BookDetail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/src/pages/BookDetail.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/src/pages/Home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/src/pages/Home.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/src/pages/Profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/src/pages/Profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/src/pages/admin/Dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/src/pages/admin/Dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/src/pages/admin/ManageBooks.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/src/pages/admin/ManageBooks.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/src/services/book.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/src/services/book.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digilib-frontend/src/types/book.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/digilib-frontend/src/types/book.types.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,17 +38,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "D:/Library",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Library&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

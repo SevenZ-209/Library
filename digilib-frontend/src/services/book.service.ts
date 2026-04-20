@@ -29,8 +29,12 @@ export const bookService = {
     return response.data;
   },
 
-  async createBook(data: Partial<Book>): Promise<Book> {
-    const response = await api.post<Book>('/api/book/', data);
+  async createBook(formData: FormData): Promise<Book> {
+    const response = await api.post<Book>('/api/book/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   },
 
@@ -44,6 +48,19 @@ export const bookService = {
   },
 
   async borrowBook(bookId: number): Promise<void> {
-    await api.post(`/api/book/${bookId}/borrow/`);
+    await api.post(`/api/borrower/`, { book_id: bookId });
+  },
+
+  async getAllBorrowRecords(): Promise<PaginatedResponse<BorrowRecord>> {
+    const response = await api.get<PaginatedResponse<BorrowRecord>>('/api/borrower/');
+    return response.data;
+  },
+
+  async confirmPickup(recordId: number): Promise<void> {
+    await api.post(`/api/borrower/${recordId}/confirm-pickup/`);
+  },
+
+  async returnBook(recordId: number): Promise<void> {
+    await api.post(`/api/borrower/${recordId}/return/`);
   },
 };

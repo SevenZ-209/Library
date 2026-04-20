@@ -21,3 +21,12 @@ export function getAvailabilityStatus(available: number, total: number): Availab
   if (available <= total * 0.2) return 'limited';
   return 'available';
 }
+
+export function getImageUrl(url: string | null): string | undefined {
+  if (!url) return undefined;
+  
+  if (url.startsWith('http')) return url;
+  
+  if (url.startsWith('image/upload')) return `https://res.cloudinary.com/dgpiotsmt/${url}`;
+
+}

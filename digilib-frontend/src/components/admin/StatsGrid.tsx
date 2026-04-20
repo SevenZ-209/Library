@@ -33,35 +33,31 @@ export function StatsGrid({ stats, isLoading }: StatsGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatsCard
-        title="Total Books"
+        title="Tổng Số Sách"
         value={stats?.total_books ?? 0}
         iconName="book_2"
         color="primary"
-        trend={{ value: 5, isPositive: true }}
         index={0}
       />
       <StatsCard
-        title="Borrowed"
+        title="Đang Mượn"
         value={stats?.borrowed_books ?? 0}
         iconName="handshake"
         color="warning"
-        trend={{ value: 12, isPositive: true }}
         index={1}
       />
       <StatsCard
-        title="Overdue"
+        title="Quá Hạn"
         value={stats?.overdue_books ?? 0}
         iconName="warning"
         color="error"
-        trend={{ value: -2, isPositive: false }}
         index={2}
       />
       <StatsCard
-        title="Active Users"
-        value={stats?.active_users ?? 890}
+        title="Số Độc Giả"
+        value={stats?.active_users ?? 0}
         iconName="group"
         color="success"
-        trend={{ value: 8, isPositive: true }}
         index={3}
       />
     </div>

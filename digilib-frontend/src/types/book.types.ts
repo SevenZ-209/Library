@@ -30,7 +30,7 @@ export interface BorrowRecord {
   borrow_date: string;
   due_date: string;
   return_date: string | null;
-  status: 'borrowed' | 'returned' | 'overdue';
+  status: 'pending' | 'borrowed' | 'returned' | 'overdue' | 'cancelled';
   note: string;
 }
 
@@ -39,6 +39,7 @@ export interface DashboardStats {
   borrowed_books: number;
   overdue_books: number;
   active_users?: number;
+  chart_data?: { name: string; borrows: number }[];
 }
 
 export interface PaginatedResponse<T> {
