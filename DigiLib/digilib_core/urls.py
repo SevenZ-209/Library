@@ -12,6 +12,6 @@ r.register('user', views.UserView, basename='user')
 r.register('borrower', views.BorrowRecordViewSet, basename='borrower')
 
 urlpatterns = [
-    path('', include(r.urls)),
+    path('api/', include(r.urls)),
 ]
 

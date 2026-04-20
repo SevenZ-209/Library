@@ -33,10 +33,10 @@ class BookView(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView,
         return serializers.BookSerializer
 
     def get_permissions(self):
-        if self.action in ['create', 'partial_update', 'destroy']:
+        if self.action in ['create', 'partial_update', 'destroy', 'borrow_book']:
             return [IsLibrarianOrAdmin()]
 
-        if self.action in ['list', 'retrieve']:
+        if self.action in ['list', 'retrieve', 'get_borrow_history']:
             return [permissions.AllowAny()]
 
         return [permissions.IsAuthenticated()]
@@ -94,6 +94,51 @@ class BookView(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView,
         history = book.borrow_records.all().order_by('-borrow_date')
         serializer = serializers.BorrowRecordSerializer(history, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=['post'], url_path='borrow', detail=True)
+    def borrow_book(self, request, pk=None):
+        if not request.user.is_authenticated:
+            return Response(
+                {'error': 'Vui lòng đăng nhập để mượn sách.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        from django.utils import timezone
+        from datetime import timedelta
+
+        book = self.get_object()
+
+        if book.available_copies <= 0:
+            return Response(
+                {'error': 'Sách này hiện không có sẵn để mượn.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        existing_borrow = BorrowRecord.objects.filter(
+            user=request.user,
+            book=book,
+            status='borrowed'
+        ).first()
+
+        if existing_borrow:
+            return Response(
+                {'error': 'Bạn đã mượn cuốn sách này rồi.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        due_date = timezone.now() + timedelta(days=14)
+        borrow_record = BorrowRecord.objects.create(
+            user=request.user,
+            book=book,
+            due_date=due_date,
+            status='borrowed'
+        )
+
+        book.available_copies -= 1
+        book.save()
+
+        serializer = serializers.BorrowRecordSerializer(borrow_record)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(methods=['get'], url_path='dashboard-stats', detail=False)
     def get_dashboard_stats(self, request):

@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'jazzmin',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,6 +55,7 @@ CKEDITOR_UPLOAD_PATH = 'uploads/ckeditors'
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -106,8 +108,9 @@ DATABASES = {
     'ENGINE': 'django.db.backends.mysql',
     'NAME': 'librarydb',
     'USER': 'root',
-    'PASSWORD': '1',
-    'HOST': ''
+    'PASSWORD': '120505Hh',
+    'HOST': 'localhost',
+    'PORT': '3306',
     }
 }
 
@@ -173,3 +176,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# CORS Settings
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+]
+CORS_ALLOW_CREDENTIALS = True
