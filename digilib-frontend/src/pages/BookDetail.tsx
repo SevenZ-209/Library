@@ -51,6 +51,8 @@ export default function BookDetailPage() {
       return;
     }
 
+    if (!book) return;
+
     try {
       setIsBorrowing(true);
       await bookService.borrowBook(book.id);
