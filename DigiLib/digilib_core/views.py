@@ -1,5 +1,5 @@
 from datetime import timedelta
-
+from django.db.models.functions import ExtractMonth
 from django.db import transaction
 from django.db.models import Count
 from django.http import HttpResponse
@@ -8,6 +8,7 @@ from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework import viewsets, generics, permissions, status, parsers
 from rest_framework.decorators import action
+from django.db.models import Q
 
 from digilib_core import serializers, paginators
 from digilib_core.models import Category, Book, User, Tag, BorrowRecord
@@ -145,11 +146,28 @@ class BookView(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView,
         total_books = Book.objects.count()
         borrowed_books = BorrowRecord.objects.filter(status='borrowed').count()
         overdue_books = BorrowRecord.objects.filter(status='overdue').count()
+        active_users = User.objects.count()
+        monthly_stats = BorrowRecord.objects.annotate(
+            month=ExtractMonth('borrow_date')
+        ).values('month').annotate(
+            borrows=Count('id')
+        ).order_by('month')
+
+        chart_data = []
+        for stat in monthly_stats:
+            if stat['month']:
+                chart_data.append({
+                    'name': f"T{stat['month']}",
+                    'borrows': stat['borrows']
+                })
+
 
         return Response({
             'total_books': total_books,
             'borrowed_books': borrowed_books,
-            'overdue_books': overdue_books
+            'overdue_books': overdue_books,
+            'active_users': active_users,
+            'chart_data': chart_data
         }, status=status.HTTP_200_OK)
 
 class UserView(viewsets.ViewSet, generics.CreateAPIView):
@@ -176,6 +194,7 @@ class BorrowRecordViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
     queryset = BorrowRecord.objects.all()
     serializer_class = BorrowRecordSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = paginators.BookPagination
 
     def get_queryset(self):
         user = self.request.user
@@ -189,9 +208,11 @@ class BorrowRecordViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
         book_id = request.data.get('book_id')
 
         has_overdue = BorrowRecord.objects.filter(
-            user=user,
-            status__in=['borrowed', 'overdue'],
-            due_date__lt=timezone.now()
+            Q(user=user) &
+            (
+                    Q(status='overdue') |
+                    Q(status='borrowed', due_date__lt=timezone.now())
+            )
         ).exists()
 
         if has_overdue:
