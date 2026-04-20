@@ -13,3 +13,11 @@ export function formatDate(date: string | Date): string {
     year: 'numeric',
   });
 }
+
+export type AvailabilityStatus = 'available' | 'limited' | 'unavailable';
+
+export function getAvailabilityStatus(available: number, total: number): AvailabilityStatus {
+  if (available === 0) return 'unavailable';
+  if (available <= total * 0.2) return 'limited';
+  return 'available';
+}
