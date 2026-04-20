@@ -44,7 +44,7 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(BorrowRecord)
 class BorrowRecordAdmin(admin.ModelAdmin):
-    list_display = ['user', 'book', 'borrow_date', 'due_date', 'status']
+    list_display = ['id','user', 'book', 'borrow_date', 'due_date', 'status']
     list_filter = ['status', 'borrow_date']
     search_fields = ['user__username', 'book__title']
 

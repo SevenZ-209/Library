@@ -74,9 +74,11 @@ class Book(BaseModel):
 
 class BorrowRecord(models.Model):
     STATUS_CHOICES = (
+        ('pending', 'Chờ nhận sách'),
         ('borrowed', 'Đang mượn'),
         ('returned', 'Đã trả'),
         ('overdue', 'Quá hạn'),
+        ('cancelled', 'Đã hủy'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='borrow_records')
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='borrow_records')

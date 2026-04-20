@@ -142,8 +142,6 @@ class BookView(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView,
 
     @action(methods=['get'], url_path='dashboard-stats', detail=False)
     def get_dashboard_stats(self, request):
-        from digilib_core.models import BorrowRecord
-
         total_books = Book.objects.count()
         borrowed_books = BorrowRecord.objects.filter(status='borrowed').count()
         overdue_books = BorrowRecord.objects.filter(status='overdue').count()
@@ -202,15 +200,15 @@ class BorrowRecordViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
                 status=status.HTTP_403_FORBIDDEN
             )
 
-
         active_borrows_count = BorrowRecord.objects.filter(
             user=user,
-            status='borrowed'
+            status__in=['borrowed', 'pending']
         ).count()
 
         if active_borrows_count >= 3:
             return Response(
-                {"detail": "Bạn đã đạt giới hạn mượn tối đa (3 cuốn). Vui lòng trả sách cũ để được mượn tiếp!"},
+                {
+                    "detail": "Bạn đã đạt giới hạn mượn (đang giữ chỗ/mượn tối đa 3 cuốn). Vui lòng trả hoặc hủy sách cũ!"},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -223,25 +221,52 @@ class BorrowRecordViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
             return Response({"detail": "Sách này đã hết bản có sẵn để mượn."}, status=status.HTTP_400_BAD_REQUEST)
 
         existing_borrow = BorrowRecord.objects.filter(
-            user=user, book=book, status__in=['borrowed', 'overdue']
+            user=user, book=book, status__in=['borrowed', 'overdue', 'pending']
         ).exists()
 
         if existing_borrow:
-            return Response({"detail": "Bạn đang mượn cuốn sách này rồi."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Bạn đang mượn hoặc đã đặt giữ chỗ cuốn sách này rồi."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         book.available_copies -= 1
         book.save()
 
-        due_date = timezone.now() + timedelta(days=14)
+        temp_due_date = timezone.now() + timedelta(hours=24)
+
         record = BorrowRecord.objects.create(
             user=user,
             book=book,
-            due_date=due_date,
-            status='borrowed'
+            due_date=temp_due_date,
+            status='pending'
         )
 
         serializer = self.get_serializer(record)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'], url_path='confirm-pickup', permission_classes=[IsLibrarianOrAdmin])
+    @transaction.atomic
+    def confirm_pickup(self, request, pk=None):
+        try:
+            record = BorrowRecord.objects.select_for_update().get(pk=pk)
+        except BorrowRecord.DoesNotExist:
+            return Response({"detail": "Không tìm thấy phiếu mượn."}, status=status.HTTP_404_NOT_FOUND)
+
+        if record.status != 'pending':
+            return Response(
+                {"detail": "Phiếu này không ở trạng thái chờ nhận sách (pending)."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        record.status = 'borrowed'
+
+        record.due_date = timezone.now() + timedelta(days=14)
+        record.save()
+
+        return Response({
+            "detail": "Xác nhận giao sách thành công. Độc giả chính thức bắt đầu mượn sách.",
+            "new_due_date": record.due_date,
+            "status": record.status
+        }, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['post'], url_path='return', permission_classes=[IsLibrarianOrAdmin])
     @transaction.atomic
