@@ -87,7 +87,8 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields =['id', 'name']
-        
+
+#fix
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
