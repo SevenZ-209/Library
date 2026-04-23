@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from digilib_core.models import Category, Book, BorrowRecord, User, Tag
+from digilib_core.models import Category, Book, BorrowRecord, User, Tag, Notification
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -87,3 +87,9 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields =['id', 'name']
+
+#fix
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'title', 'message', 'is_read', 'created_date']

@@ -37,6 +37,12 @@ def check_overdue_books_and_notify():
         due_date__lte=tomorrow
     )
     for record in due_soon_records:
+        Notification.objects.create(
+            user=record.user,
+            title='Sắp đến hạn trả sách',
+            message=f'Cuốn sách "{record.book.title}" sẽ đến hạn trả vào ngày mai ({record.due_date.strftime("%d/%m/%Y")}).'
+        )
+        
         if record.user.email:
             send_mail(
                 subject='[DigiLib] Nhắc nhở sắp đến hạn trả sách!',
