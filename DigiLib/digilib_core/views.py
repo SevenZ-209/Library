@@ -313,3 +313,16 @@ class BorrowRecordViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
             "detail": "Đã duyệt trả sách thành công.",
             "book_available_copies": book.available_copies
         }, status=status.HTTP_200_OK)
+
+class NotificationViewSet(viewsets.ViewSet, generics.ListAPIView):
+    serializer_class = serializers.NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return self.request.user.notifications.all()
+
+    @action(detail=False, methods=['post'], url_path='mark-all-read')
+    def mark_all_read(self, request):
+        unread_notifications = request.user.notifications.filter(is_read=False)
+        updated_count = unread_notifications.update(is_read=True)
+        return Response({"detail": f"Đã đánh dấu đọc {updated_count} thông báo."}, status=status.HTTP_200_OK)
