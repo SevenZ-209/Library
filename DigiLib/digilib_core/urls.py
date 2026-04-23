@@ -10,7 +10,6 @@ r.register('book', views.BookView, basename='book')
 r.register('tag', views.TagView, basename='tag')
 r.register('user', views.UserView, basename='user')
 r.register('borrower', views.BorrowRecordViewSet, basename='borrower')
-r.register('notification', views.NotificationViewSet, basename='notification')
 
 urlpatterns = [
     path('api/', include(r.urls)),
