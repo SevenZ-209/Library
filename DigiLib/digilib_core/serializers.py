@@ -87,8 +87,8 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields =['id', 'name']
-
+        
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
-        fields = ['id', 'title', 'message', 'is_read', 'created_date']
+        fields = ['id', 'title', 'message', 'is_read', 'created_date']

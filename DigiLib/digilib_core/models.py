@@ -104,4 +104,4 @@ class Notification(models.Model):
         ordering = ['-created_date']
 
     def __str__(self):
-        return f"Thông báo cho {self.user.username}: {self.title}"
+        return f"Thông báo cho {self.user.username}: {self.title}"

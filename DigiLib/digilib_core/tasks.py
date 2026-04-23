@@ -43,7 +43,6 @@ def check_overdue_books_and_notify():
         due_date__lte=tomorrow
     )
     for record in due_soon_records:
-        # Tạo thông báo trên web
         Notification.objects.create(
             user=record.user,
             title='Sắp đến hạn trả sách',
