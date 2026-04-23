@@ -27,6 +27,7 @@ export interface BorrowRecord {
   id: number;
   borrower_name: string;
   borrower_phone: string;
+  book_title: string;
   borrow_date: string;
   due_date: string;
   return_date: string | null;

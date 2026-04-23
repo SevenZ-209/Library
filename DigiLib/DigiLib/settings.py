@@ -108,7 +108,7 @@ DATABASES = {
     'ENGINE': 'django.db.backends.mysql',
     'NAME': 'librarydb',
     'USER': 'root',
-    'PASSWORD': '1',
+    'PASSWORD': 'Hxjdjdn863',
     'HOST': 'localhost',
     'PORT': '3306',
     }
@@ -185,3 +185,26 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5174",
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# Celery Configuration
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+from celery.schedules import crontab
+CELERY_BEAT_SCHEDULE = {
+    'check_overdue_books_every_minute': {
+        'task': 'digilib_core.tasks.check_overdue_books_and_notify',
+        'schedule': crontab(minute=0, hour=8),   
+        },
+}
+
+# Email Configuration (SMTP Gmail)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'thuvien.digilib@gmail.com'
+EMAIL_HOST_PASSWORD = 'vivq qhqn mgkl xzzi'
+

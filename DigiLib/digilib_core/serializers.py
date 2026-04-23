@@ -36,11 +36,12 @@ class BookDetailSerializer(serializers.ModelSerializer):
 class BorrowRecordSerializer(serializers.ModelSerializer):
     borrower_name = serializers.ReadOnlyField(source='user.username')
     borrower_phone = serializers.ReadOnlyField(source='user.phone')
+    book_title = serializers.ReadOnlyField(source='book.title')
 
     class Meta:
         model = BorrowRecord
         fields = [
-            'id', 'borrower_name', 'borrower_phone',
+            'id', 'borrower_name', 'borrower_phone', 'book_title',
             'borrow_date', 'due_date', 'return_date',
             'status', 'note'
         ]
