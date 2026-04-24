@@ -5,6 +5,7 @@ cloudinary==1.44.1
 cryptography==46.0.6
 Django==6.0.3
 django-ckeditor==6.7.3
+django-cors-headers==4.7.0
 django-jazzmin==3.0.4
 django-js-asset==3.1.2
 djangorestframework==3.17.1
@@ -28,3 +29,4 @@ uritemplate==4.2.0
 urllib3==2.6.3
 celery==5.4.0
 python-dotenv==1.0.1
+

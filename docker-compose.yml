@@ -1,0 +1,189 @@
+version: '3.9'
+
+# ============================================================
+# DigiLib - Docker Compose
+# Services: MySQL, RabbitMQ, Django Backend,
+#           Celery Worker, Celery Beat, React Frontend
+# ============================================================
+
+services:
+
+  # ----------------------------------------------------------
+  # 1. DATABASE - MySQL 8
+  # ----------------------------------------------------------
+  db:
+    image: mysql:8.0
+    container_name: digilib_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: librarydb
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-Hxjdjdn863}
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_USER: ${DB_USER:-digilib}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-digilib123}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"         # dùng 3307 để không đụng MySQL local
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 180s
+    networks:
+      - digilib_net
+
+  # ----------------------------------------------------------
+  # 2. MESSAGE BROKER - RabbitMQ 3 (with Management UI)
+  # ----------------------------------------------------------
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: digilib_rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    ports:
+      - "5672:5672"         # AMQP protocol
+      - "15672:15672"       # RabbitMQ Management UI
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - digilib_net
+
+  # ----------------------------------------------------------
+  # 3. DJANGO BACKEND API
+  # ----------------------------------------------------------
+  backend:
+    build:
+      context: ./DigiLib
+      dockerfile: Dockerfile
+    container_name: digilib_backend
+    restart: unless-stopped
+    env_file:
+      - ./DigiLib/.env
+    environment:
+      # Database
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-librarydb}
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-Hxjdjdn863}
+      # Celery Broker
+      CELERY_BROKER_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672//
+      # Django
+      DJANGO_SETTINGS_MODULE: DigiLib.settings
+      ALLOWED_HOSTS: "*"
+      DEBUG: ${DEBUG:-True}
+    volumes:
+      - ./DigiLib:/app               # hot-reload trong dev
+      - media_data:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - digilib_net
+
+  # ----------------------------------------------------------
+  # 4. CELERY WORKER (xử lý background task gửi email)
+  # ----------------------------------------------------------
+  celery_worker:
+    build:
+      context: ./DigiLib
+      dockerfile: Dockerfile
+    container_name: digilib_celery_worker
+    restart: unless-stopped
+    env_file:
+      - ./DigiLib/.env
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-librarydb}
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-Hxjdjdn863}
+      CELERY_BROKER_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672//
+      DJANGO_SETTINGS_MODULE: DigiLib.settings
+    volumes:
+      - ./DigiLib:/app
+      - media_data:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    command: celery -A DigiLib worker --loglevel=info --pool=solo
+    networks:
+      - digilib_net
+
+  # ----------------------------------------------------------
+  # 5. CELERY BEAT (lập lịch: 8h sáng mỗi ngày)
+  # ----------------------------------------------------------
+  celery_beat:
+    build:
+      context: ./DigiLib
+      dockerfile: Dockerfile
+    container_name: digilib_celery_beat
+    restart: unless-stopped
+    env_file:
+      - ./DigiLib/.env
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-librarydb}
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-Hxjdjdn863}
+      CELERY_BROKER_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672//
+      DJANGO_SETTINGS_MODULE: DigiLib.settings
+    volumes:
+      - ./DigiLib:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    command: celery -A DigiLib beat --loglevel=info
+    networks:
+      - digilib_net
+
+  # ----------------------------------------------------------
+  # 6. REACT FRONTEND (build + nginx)
+  # ----------------------------------------------------------
+  frontend:
+    build:
+      context: ./digilib-frontend
+      dockerfile: Dockerfile
+    container_name: digilib_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"             # Truy cập tại http://localhost
+    depends_on:
+      - backend
+    networks:
+      - digilib_net
+
+# ============================================================
+# VOLUMES
+# ============================================================
+volumes:
+  mysql_data:
+    driver: local
+  media_data:
+    driver: local
+
+# ============================================================
+# NETWORKS
+# ============================================================
+networks:
+  digilib_net:
+    driver: bridge

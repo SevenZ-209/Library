@@ -13,6 +13,7 @@ import ProfilePage from '@/pages/Profile';
 import NotFoundPage from '@/pages/NotFound';
 import DashboardPage from '@/pages/admin/Dashboard';
 import ManageBooksPage from '@/pages/admin/ManageBooks';
+import ManageBorrowRecordsPage from '@/pages/admin/ManageBorrowRecords';
 
 import '@/styles/view-transitions.css';
 import '@/styles/animations.css';
@@ -59,6 +60,7 @@ export default function App() {
           >
             <Route index element={<DashboardPage />} />
             <Route path="books" element={<ManageBooksPage />} />
+            <Route path="borrows" element={<ManageBorrowRecordsPage />} />
           </Route>
 
           {/* 404 */}

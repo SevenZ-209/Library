@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 const navItems = [
   { path: '/admin', icon: 'dashboard', label: 'Tổng quan' },
   { path: '/admin/books', icon: 'menu_book', label: 'Quản lý Sách' },
+  { path: '/admin/borrows', icon: 'list_alt', label: 'Quản lý Mượn trả' },
 ];
 
 
