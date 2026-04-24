@@ -325,4 +325,4 @@ class NotificationViewSet(viewsets.ViewSet, generics.ListAPIView):
     def mark_all_read(self, request):
         unread_notifications = request.user.notifications.filter(is_read=False)
         updated_count = unread_notifications.update(is_read=True)
-        return Response({"detail": f"Đã đánh dấu đọc {updated_count} thông báo."}, status=status.HTTP_200_OK)
+        return Response({"detail": f"Đã đánh dấu đọc {updated_count} thông báo."}, status=status.HTTP_200_OK)
