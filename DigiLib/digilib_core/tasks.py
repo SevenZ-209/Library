@@ -3,7 +3,7 @@ from django.core.mail import send_mail
 from django.utils import timezone
 from datetime import timedelta
 from django.conf import settings
-from .models import BorrowRecord
+from .models import BorrowRecord, Notification
 
 @shared_task
 def check_overdue_books_and_notify():
@@ -13,6 +13,12 @@ def check_overdue_books_and_notify():
     for record in overdue_records:
         record.status = 'overdue'
         record.save()
+        
+        Notification.objects.create(
+            user=record.user,
+            title='Cảnh báo quá hạn trả sách',
+            message=f'Cuốn sách "{record.book.title}" của bạn đã quá hạn trả ({record.due_date.strftime("%d/%m/%Y")}). Vui lòng trả sách sớm nhất có thể.'
+        )
         
         if record.user.email:
             send_mail(

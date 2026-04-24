@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/utils';
+import { NotificationDropdown } from './NotificationDropdown';
 
 export function Header() {
   const location = useLocation();
@@ -42,12 +43,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <button
-            aria-label="Thông báo"
-            className="p-2 rounded-full hover:bg-teal-50/50 transition-all duration-300 text-primary active:scale-95"
-          >
-            <span className="material-symbols-outlined">notifications</span>
-          </button>
+          {isAuthenticated && user && <NotificationDropdown />}
 
           {isAuthenticated && user && (user.role === 'admin' || user.role === 'librarian') && (
             <Link
