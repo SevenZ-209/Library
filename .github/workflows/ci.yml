@@ -25,7 +25,7 @@ jobs:
     - name:  Build Frontend (React + Vite)
       working-directory: ./digilib-frontend
       run: |
-        npm ci
+        npm install
         npm run build
 
     - name:  Verify Docker Compose Build
