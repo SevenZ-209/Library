@@ -11,6 +11,7 @@ export default function ManageBorrowRecords() {
   const [records, setRecords] = useState<BorrowRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const { addToast } = useUIStore();
 
   const fetchRecords = async () => {
@@ -55,6 +56,12 @@ export default function ManageBorrowRecords() {
     }
   };
 
+  const filteredRecords = records.filter(record => {
+    const nameMatch = (record.borrower_name || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const idMatch = record.id.toString().includes(searchTerm);
+    return nameMatch || idMatch;
+  });
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -73,6 +80,22 @@ export default function ManageBorrowRecords() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h2 className="font-semibold text-lg">Danh sách phiếu mượn</h2>
+          <div className="relative">
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+              search
+            </span>
+            <input
+              type="text"
+              placeholder="Tìm tên hoặc mã phiếu..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-full sm:w-64 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+            />
+          </div>
+        </div>
+
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -86,14 +109,14 @@ export default function ManageBorrowRecords() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {records.length === 0 ? (
+              {filteredRecords.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                    Không có phiếu mượn nào.
+                    Không có phiếu mượn nào phù hợp.
                   </td>
                 </tr>
               ) : (
-                records.map((record) => (
+                filteredRecords.map((record) => (
                   <tr key={record.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="font-mono text-sm text-gray-600">#{record.id.toString().padStart(4, '0')}</span>

@@ -1,0 +1,36 @@
+name: DigiLib CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "master", "feature/*" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    name: Build & Test System
+    runs-on: ubuntu-latest
+
+    steps:
+    - name:  Checkout Repository
+      uses: actions/checkout@v4
+
+    - name:  Set up Node.js for Frontend
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+        cache-dependency-path: digilib-frontend/package-lock.json
+
+    - name:  Build Frontend (React + Vite)
+      working-directory: ./digilib-frontend
+      run: |
+        npm install
+        npm run build
+
+    - name:  Verify Docker Compose Build
+      run: |
+        # Tạo file .env giả lập từ template để test build
+        cp .env.docker.example .env
+        # Thử build toàn bộ các containers để đảm bảo không có lỗi
+        docker compose build

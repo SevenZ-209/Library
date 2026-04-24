@@ -19,12 +19,12 @@ def check_overdue_books_and_notify():
                 subject='[DigiLib] Cảnh báo quá hạn trả sách!',
                 message=f'''Chào {record.user.username},
 
-                            Chúng tôi nhận thấy cuốn sách "{record.book.title}" bạn mượn vào ngày {record.borrow_date.strftime("%d/%m/%Y")} đã quá hạn trả (hạn trả: {record.due_date.strftime("%d/%m/%Y")}).
-                            Vui lòng mang sách đến trả tại thư viện trong thời gian sớm nhất để tránh bị phạt.
+Chúng tôi nhận thấy cuốn sách "{record.book.title}" bạn mượn vào ngày {record.borrow_date.strftime("%d/%m/%Y")} đã quá hạn trả (hạn trả: {record.due_date.strftime("%d/%m/%Y")}).
+Vui lòng mang sách đến trả tại thư viện trong thời gian sớm nhất để tránh bị phạt.
 
-                            Trân trọng,
-                            Đội ngũ DigiLib
-                        ''',
+Trân trọng,
+Đội ngũ DigiLib
+''',
                 from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[record.user.email],
                 fail_silently=True,
@@ -48,12 +48,12 @@ def check_overdue_books_and_notify():
                 subject='[DigiLib] Nhắc nhở sắp đến hạn trả sách!',
                 message=f'''Chào {record.user.username},
 
-                            Chúng tôi xin nhắc bạn rằng cuốn sách "{record.book.title}" sẽ đến hạn trả vào ngày mai ({record.due_date.strftime("%d/%m/%Y %H:%M")}).
-                            Vui lòng sắp xếp thời gian trả sách đúng hạn.
+Chúng tôi xin nhắc bạn rằng cuốn sách "{record.book.title}" sẽ đến hạn trả vào ngày mai ({record.due_date.strftime("%d/%m/%Y %H:%M")}).
+Vui lòng sắp xếp thời gian trả sách đúng hạn.
 
-                            Trân trọng,
-                            Đội ngũ DigiLib
-                        ''',
+Trân trọng,
+Đội ngũ DigiLib
+''',
                 from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[record.user.email],
                 fail_silently=True,
