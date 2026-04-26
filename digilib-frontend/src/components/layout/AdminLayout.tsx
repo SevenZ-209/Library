@@ -2,16 +2,17 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/utils';
 
-// Sidebar nav items - sẽ được lọc theo role
+
 const getNavItems = (role: string | undefined) => {
   const items = [];
-  
-  // Admin: chỉ thấy Tổng quan
+
   if (role === 'admin') {
     items.push({ path: '/admin', icon: 'dashboard', label: 'Tổng quan' });
+    items.push({ path: '/admin/books', icon: 'menu_book', label: 'Quản lý Sách' });
+    items.push({ path: '/admin/borrows', icon: 'list_alt', label: 'Quản lý Mượn trả' });
   }
   
-  // Thủ thư: thấy Quản lý Sách và Quản lý Mượn trả, không thấy Tổng quan
+
   if (role === 'librarian') {
     items.push({ path: '/admin/books', icon: 'menu_book', label: 'Quản lý Sách' });
     items.push({ path: '/admin/borrows', icon: 'list_alt', label: 'Quản lý Mượn trả' });
@@ -28,9 +29,9 @@ export function AdminLayout() {
 
   return (
     <div className="min-h-screen flex bg-surface">
-      {/* Sidebar */}
+
       <aside className="w-64 bg-teal-50 flex flex-col py-8 px-4 border-r border-teal-100/10 fixed left-0 top-0 bottom-0 z-40">
-        {/* Logo */}
+
         <Link to="/" className="mb-10 px-2 flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
           <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-md">
             <span className="material-symbols-outlined text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -47,7 +48,7 @@ export function AdminLayout() {
           </div>
         </Link>
 
-        {/* Nav */}
+
         <nav className="flex-1 space-y-1">
           {getNavItems(user?.role).map((item) => {
             const isActive = location.pathname === item.path;
@@ -76,7 +77,6 @@ export function AdminLayout() {
           })}
         </nav>
 
-        {/* Bottom actions */}
         <div className="mt-auto pt-6 border-t border-teal-100/20 space-y-1">
           <button
             onClick={logout}
@@ -88,9 +88,8 @@ export function AdminLayout() {
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="ml-64 flex-1 min-h-screen">
-        {/* Top bar */}
+
         <header className="sticky top-0 z-30 bg-teal-50/85 backdrop-blur-xl flex justify-between items-center w-full px-8 py-4 border-b border-teal-100/50">
           <div className="flex items-center gap-2">
             <span className="text-teal-700 font-headline font-bold text-lg">DigiLib Admin</span>
@@ -101,7 +100,7 @@ export function AdminLayout() {
           </div>
 
           <div className="flex items-center gap-6">
-            {/* User info */}
+
             <div className="flex items-center gap-4">
               <Link 
                 to="/" 
@@ -112,7 +111,7 @@ export function AdminLayout() {
               </Link>
 
               
-              {/* Khu vực User Profile - Click để vào trang cá nhân */}
+
               <button 
                 onClick={() => navigate('/profile')}
                 className="flex items-center gap-3 pl-4 border-l border-teal-100/50 hover:opacity-70 transition-opacity text-left cursor-pointer"
