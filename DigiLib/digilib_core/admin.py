@@ -3,8 +3,8 @@ from django.db.models import Count
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.utils.safestring import mark_safe
-from .models import Category, Book, BorrowRecord, Tag, User
-from digilib_core.models import Category, Book, BorrowRecord
+from .models import Category, Book, BorrowRecord, Tag, User, Collection, CollectionBook
+from .models import Category, Book, BorrowRecord
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 
@@ -64,6 +64,38 @@ def stats_view(request):
         'title': 'Báo cáo & Thống kê Thư viện'
     }
     return TemplateResponse(request, 'admin/stats.html', context)
+
+
+class CollectionBookInline(admin.TabularInline):
+    model = CollectionBook
+    extra = 1
+    autocomplete_fields = ['book']
+
+
+@admin.register(Collection)
+class CollectionAdmin(admin.ModelAdmin):
+
+    list_display = ('id', 'name', 'curator', 'book_count', 'is_featured', 'show_cover')
+    list_filter = ('is_featured', 'curator', 'active')
+    search_fields = ('name', 'description')
+
+    inlines = [CollectionBookInline]
+
+    list_editable = ('is_featured',)
+
+    def show_cover(self, obj):
+        if obj.cover_image:
+            return mark_safe(f'<img src="{obj.cover_image.url}" width="50" style="border-radius: 4px;" />')
+        return "No Cover"
+
+    show_cover.short_description = "Ảnh bìa"
+
+
+@admin.register(CollectionBook)
+class CollectionBookAdmin(admin.ModelAdmin):
+    list_display = ('collection', 'book', 'added_date')
+    list_filter = ('collection', 'added_date')
+    autocomplete_fields = ['collection', 'book']
 
 
 admin.site.register(Tag)

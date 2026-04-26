@@ -21,12 +21,29 @@ export const collectionService = {
     return Array.isArray(data) ? data : (data?.results ?? []);
   },
 
-  async createCollection(data: { name: string; description: string }): Promise<Collection> {
-    const response = await api.post<Collection>('/api/collection/', data);
+  async createCollection(data: FormData): Promise<Collection> {
+    const response = await api.post<Collection>('/api/collection/', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   },
 
   async addBookToCollection(collectionId: number, bookId: number): Promise<void> {
     await api.post(`/api/collection/${collectionId}/add-book/`, { book_id: bookId });
+  },
+
+  async updateCollection(id: number, data: FormData): Promise<Collection> {
+    const response = await api.patch<Collection>(`/api/collection/${id}/`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  async removeBookFromCollection(collectionId: number, bookId: number): Promise<void> {
+    await api.post(`/api/collection/${collectionId}/remove-book/`, { book_id: bookId });
   },
 };

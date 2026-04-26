@@ -86,6 +86,9 @@
         "model": "digilib_core.category",
         "pk": 1,
         "fields": {
+          "active": true,
+        "created_date": "2026-04-20T16:20:00Z",
+        "updated_date": "2026-04-20T16:20:00Z",
             "name": "Tiểu thuyết"
         }
     },
@@ -93,6 +96,9 @@
         "model": "digilib_core.category",
         "pk": 2,
         "fields": {
+          "active": true,
+        "created_date": "2026-04-20T16:20:00Z",
+        "updated_date": "2026-04-20T16:20:00Z",
             "name": "Ngôn tình"
         }
     },
@@ -100,21 +106,30 @@
         "model": "digilib_core.category",
         "pk": 3,
         "fields": {
-            "name": "Tiếng Anh"
+          "active": true,
+          "created_date": "2026-04-20T16:20:00Z",
+          "updated_date": "2026-04-20T16:20:00Z",
+          "name": "Tiếng Anh"
         }
     },
     {
         "model": "digilib_core.category",
         "pk": 4,
         "fields": {
-            "name": "Manga"
+          "active": true,
+          "created_date": "2026-04-20T16:20:00Z",
+          "updated_date": "2026-04-20T16:20:00Z",
+          "name": "Manga"
         }
     },
     {
         "model": "digilib_core.category",
         "pk": 5,
         "fields": {
-            "name": "Kinh tế"
+          "active": true,
+          "created_date": "2026-04-20T16:20:00Z",
+          "updated_date": "2026-04-20T16:20:00Z",
+          "name": "Kinh tế"
         }
     },
     {
