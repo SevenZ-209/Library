@@ -13,7 +13,7 @@ from django.db.models import Q
 from digilib_core import serializers, paginators
 from digilib_core.models import Category, Book, User, Tag, BorrowRecord, Collection, CollectionBook
 from digilib_core.permissions import IsLibrarianOrAdmin
-from digilib_core.serializers import BorrowRecordSerializer
+from digilib_core.serializers import BorrowRecordSerializer, CollectionSerializer
 
 
 def index(request):
