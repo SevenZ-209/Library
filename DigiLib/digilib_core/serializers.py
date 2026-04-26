@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from digilib_core.models import Category, Book, BorrowRecord, User, Tag, Notification, Collection, CollectionBook
+from .models import Category, Book, BorrowRecord, User, Tag, Notification, Collection, CollectionBook
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -90,7 +90,7 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields =['id', 'name']
 
-#fix
+
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
@@ -116,26 +116,22 @@ class CollectionBookSerializer(serializers.ModelSerializer):
 class CollectionSerializer(serializers.ModelSerializer):
     book_count = serializers.IntegerField(read_only=True)
     curator_name = serializers.ReadOnlyField(source='curator.username')
-    cover_image = serializers.SerializerMethodField()
 
     class Meta:
         model = Collection
         fields = [
             'id', 'name', 'description', 'cover_image',
-            'book_count', 'curator_name', 'is_featured',
-            'created_date', 'updated_date'
+            'book_count', 'curator', 'curator_name',  # Thêm 'curator' vào đây
+            'is_featured', 'created_date', 'updated_date'
         ]
 
-    def get_cover_image(self, obj):
-        if obj.cover_image:
-            return obj.cover_image.url
-        return None
-
+        extra_kwargs = {
+            'curator': {'write_only': True, 'required': False}
+        }
 
 class CollectionDetailSerializer(serializers.ModelSerializer):
     book_count = serializers.IntegerField(read_only=True)
     curator_name = serializers.ReadOnlyField(source='curator.username')
-    cover_image = serializers.SerializerMethodField()
     books = serializers.SerializerMethodField()
 
     class Meta:
@@ -145,11 +141,6 @@ class CollectionDetailSerializer(serializers.ModelSerializer):
             'book_count', 'curator_name', 'is_featured',
             'books', 'created_date', 'updated_date'
         ]
-
-    def get_cover_image(self, obj):
-        if obj.cover_image:
-            return obj.cover_image.url
-        return None
 
     def get_books(self, obj):
         collection_books = obj.collection_books.select_related('book').all()
