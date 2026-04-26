@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { collectionService } from '@/services/collection.service';
-import { BookCard } from '@/components/books/BookCard';
 import { getImageUrl, formatDate } from '@/lib/utils';
 import type { Collection, CollectionBook } from '@/types/collection.types';
 import '@/styles/view-transitions.css';

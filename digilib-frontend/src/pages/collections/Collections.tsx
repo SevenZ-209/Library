@@ -16,6 +16,8 @@ const DEMO_COLLECTIONS: Collection[] = [
     cover_image: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800',
     book_count: 42,
     curator_name: 'Dr. Elena Vance',
+    is_featured: true,
+    created_date: '2023-01-01',
     updated_date: '2023-11-15',
   },
   {
@@ -25,6 +27,8 @@ const DEMO_COLLECTIONS: Collection[] = [
     cover_image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800',
     book_count: 28,
     curator_name: 'Prof. James Chen',
+    is_featured: false,
+    created_date: '2023-02-01',
     updated_date: '2023-10-20',
   },
   {
@@ -34,6 +38,8 @@ const DEMO_COLLECTIONS: Collection[] = [
     cover_image: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=800',
     book_count: 35,
     curator_name: 'Mei Lin',
+    is_featured: false,
+    created_date: '2023-03-01',
     updated_date: '2023-09-12',
   },
   {
@@ -43,6 +49,8 @@ const DEMO_COLLECTIONS: Collection[] = [
     cover_image: 'https://images.unsplash.com/photo-1461360370896-922624d12a74?w=800',
     book_count: 56,
     curator_name: 'Dr. Marcus Webb',
+    is_featured: false,
+    created_date: '2023-04-01',
     updated_date: '2023-08-30',
   },
   {
@@ -52,6 +60,8 @@ const DEMO_COLLECTIONS: Collection[] = [
     cover_image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800',
     book_count: 24,
     curator_name: 'Dr. Sarah Kim',
+    is_featured: false,
+    created_date: '2023-05-01',
     updated_date: '2023-07-18',
   },
   {
@@ -61,6 +71,8 @@ const DEMO_COLLECTIONS: Collection[] = [
     cover_image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800',
     book_count: 31,
     curator_name: 'Luca Romano',
+    is_featured: false,
+    created_date: '2023-06-01',
     updated_date: '2023-06-25',
   },
 ];

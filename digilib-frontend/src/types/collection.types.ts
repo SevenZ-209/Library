@@ -1,5 +1,3 @@
-import type { Book } from './book.types';
-
 export interface Collection {
   id: number;
   name: string;
