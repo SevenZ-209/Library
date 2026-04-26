@@ -285,10 +285,18 @@ Library/
 │       ├── serializers.py
 │       ├── tasks.py            # Celery tasks (gửi email)
 │       └── urls.py
-└── digilib-frontend/           # React Frontend
+└── digilib-frontend/           # React Frontend (Vite + TS)
     ├── Dockerfile
-    ├── nginx.conf              # Nginx SPA config + reverse proxy
+    ├── nginx.conf              # Cấu hình Nginx cho SPA
     ├── src/
+    │   ├── pages/              # Tổ chức theo tính năng (Feature-based)
+    │   │   ├── home/           # Giao diện chính + CSS Module
+    │   │   ├── auth/           # Đăng nhập/Đăng ký
+    │   │   ├── collections/    # Quản lý bộ sưu tập
+    │   │   └── ...
+    │   ├── components/         # UI Components dùng chung
+    │   ├── styles/             # Global CSS & Design Tokens
+    │   └── services/           # API Services (Axios)
     └── package.json
 ```
 
@@ -305,3 +313,4 @@ Library/
 - 🔄 **Transaction** — Mượn/trả sách an toàn với database transaction
 - 🤖 **CI/CD Pipeline** — 3 luồng GitHub Actions tự động build Frontend & test Backend
 - 📚 **Bộ sưu tập (Collections)** — Quản lý và gom nhóm sách theo chủ đề nổi bật
+- 🎨 **Modern UI/UX** — Giao diện được tối ưu hóa với Material Symbols, thiết kế theo chuẩn Modern Web và cấu trúc mã nguồn Feature-based chuyên nghiệp.
