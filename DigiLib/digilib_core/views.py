@@ -201,10 +201,14 @@ class BorrowRecordViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
     pagination_class = paginators.BookPagination
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return BorrowRecord.objects.none()
         user = self.request.user
-        if user.role in ['librarian', 'admin']:
-            return self.queryset.order_by('-borrow_date')
-        return self.queryset.filter(user=user).order_by('-borrow_date')
+        if user.is_authenticated:
+            if user.role in ['librarian', 'admin']:
+                return BorrowRecord.objects.all().order_by('-id')
+            return BorrowRecord.objects.filter(user=user).order_by('-id')
+        return BorrowRecord.objects.none()
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
