@@ -76,7 +76,8 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* KHU VỰC 2: LỊCH SỬ MƯỢN SÁCH CỦA TÔI */}
+      {/* KHU VỰC 2: LỊCH SỬ MƯỢN SÁCH - CHỈ HIỆN CHO ĐỘC GIẢ */}
+      {user.role === 'reader' && (
       <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-outline-variant/30 overflow-hidden">
         <div className="p-6 border-b border-outline-variant/30">
           <h2 className="font-headline font-extrabold text-xl text-on-surface flex items-center gap-2">
@@ -135,6 +136,8 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
+      )}
+
     </div>
   );
 }

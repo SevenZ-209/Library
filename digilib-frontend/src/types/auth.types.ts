@@ -3,6 +3,7 @@ export interface User {
   first_name: string;
   last_name: string;
   username: string;
+  email: string;
   phone: string;
   avatar: string | null;
   role: 'admin' | 'librarian' | 'reader';
@@ -22,6 +23,7 @@ export interface RegisterRequest {
   first_name: string;
   last_name: string;
   username: string;
+  email?: string;
   password: string;
   phone?: string;
 }

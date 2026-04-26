@@ -210,3 +210,19 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# AI Agent files
+.agents/
+.claude/
+.commandcode/
+.cursor/
+skills/
+skills-lock.json
+stitch_digilib_digital_library_v2_with_view_transitions/
+*.plan.md
+*-plan.md
+*-progress.md
+*-prompts.md
+implementation_plan.md
+task.md
+walkthrough.md

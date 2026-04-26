@@ -6,12 +6,12 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 from rest_framework.response import Response
-from rest_framework import viewsets, generics, permissions, status, parsers
+from rest_framework import viewsets, generics, permissions, status, parsers, mixins
 from rest_framework.decorators import action
 from django.db.models import Q
 
 from digilib_core import serializers, paginators
-from digilib_core.models import Category, Book, User, Tag, BorrowRecord
+from digilib_core.models import Category, Book, User, Tag, BorrowRecord, Collection, CollectionBook
 from digilib_core.permissions import IsLibrarianOrAdmin
 from digilib_core.serializers import BorrowRecordSerializer
 
@@ -19,10 +19,14 @@ from digilib_core.serializers import BorrowRecordSerializer
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
-class CategoryView(viewsets.ViewSet, generics.ListAPIView):
+class CategoryView(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView):
     queryset = Category.objects.all()
     serializer_class = serializers.CategorySerializer
-    permission_classes = [permissions.AllowAny]
+
+    def get_permissions(self):
+        if self.action == 'create':
+            return [IsLibrarianOrAdmin()]
+        return [permissions.AllowAny()]
 
 class BookView(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView, generics.DestroyAPIView):
     queryset = Book.objects.select_related('category').filter(active=True).order_by('-id')
@@ -326,3 +330,101 @@ class NotificationViewSet(viewsets.ViewSet, generics.ListAPIView):
         unread_notifications = request.user.notifications.filter(is_read=False)
         updated_count = unread_notifications.update(is_read=True)
         return Response({"detail": f"Đã đánh dấu đọc {updated_count} thông báo."}, status=status.HTTP_200_OK)
+
+
+class CollectionViewSet(mixins.CreateModelMixin, viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
+    queryset = Collection.objects.filter(active=True).order_by('-created_date')
+    serializer_class = serializers.CollectionSerializer
+    pagination_class = paginators.BookPagination
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return serializers.CollectionDetailSerializer
+        return serializers.CollectionSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(curator=self.request.user)
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy', 'add_book', 'remove_book']:
+            return [IsLibrarianOrAdmin()]
+        return [permissions.AllowAny()]
+
+    def get_queryset(self):
+        query = self.queryset
+
+        q = self.request.query_params.get('q')
+        if q:
+            query = query.filter(name__icontains=q)
+
+        return query
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.updated_date = timezone.now()
+        instance.save(update_fields=['updated_date'])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    @action(methods=['get'], url_path='featured', detail=False)
+    def featured(self, request):
+        featured = self.queryset.filter(is_featured=True)[:5]
+        serializer = CollectionSerializer(featured, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=['post'], url_path='add-book', detail=True)
+    def add_book(self, request, pk=None):
+        collection = self.get_object()
+        book_id = request.data.get('book_id')
+
+        if not book_id:
+            return Response({'detail': 'book_id là bắt buộc.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            book = Book.objects.get(id=book_id, active=True)
+        except Book.DoesNotExist:
+            return Response({'detail': 'Sách không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+
+        collection_book, created = CollectionBook.objects.get_or_create(
+            collection=collection,
+            book=book
+        )
+
+        if not created:
+            return Response({'detail': 'Sách đã có trong bộ sưu tập.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'detail': 'Đã thêm sách vào bộ sưu tập.'}, status=status.HTTP_201_CREATED)
+
+    @action(methods=['post'], url_path='remove-book', detail=True)
+    def remove_book(self, request, pk=None):
+        collection = self.get_object()
+        book_id = request.data.get('book_id')
+
+        if not book_id:
+            return Response({'detail': 'book_id là bắt buộc.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            collection_book = CollectionBook.objects.get(collection=collection, book_id=book_id)
+            collection_book.delete()
+            return Response({'detail': 'Đã xóa sách khỏi bộ sưu tập.'}, status=status.HTTP_200_OK)
+        except CollectionBook.DoesNotExist:
+            return Response({'detail': 'Sách không có trong bộ sưu tập.'}, status=status.HTTP_404_NOT_FOUND)
+
+    def create(self, request):
+        data = request.data.copy()
+        if not data.get('curator') and request.user.is_authenticated:
+            data['curator'] = request.user.id
+
+        serializer = CollectionSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, pk=None):
+        collection = self.get_object()
+        serializer = CollectionSerializer(collection, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

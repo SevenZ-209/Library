@@ -107,15 +107,14 @@ h1, h2, h3, h4, h5, h6 {
 /* Glassmorphism Utilities */
 .glass-header {
   background: rgba(245, 250, 248, 0.85);
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0, 104, 95, 0.08);
+  backdrop-filter: blur(20px);
 }
 
 .glass-card {
   background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
   border: 1px solid rgba(0, 104, 95, 0.12);
   border-radius: 1rem;
 }

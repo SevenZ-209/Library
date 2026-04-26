@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '@/services/api';
+import type { AxiosError } from 'axios';
 import { cn } from '@/lib/utils';
 import { useLocation } from 'react-router-dom';
 
@@ -17,20 +18,32 @@ export function NotificationDropdown() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
-  const fetchNotifications = async () => {
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const fetchNotifications = useCallback(async () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+      return;
+    }
+
     try {
       const response = await api.get('/api/notification/');
       setNotifications(response.data.results || response.data);
-    } catch (error) {
-      console.error('Failed to fetch notifications:', error);
+    } catch (error: unknown) {
+      if ((error as AxiosError).response?.status === 401) {
+        if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+      }
     }
-  };
+  }, []);
 
   useEffect(() => {
+    pollIntervalRef.current = setInterval(fetchNotifications, 60000);
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000);
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+    };
+  }, [fetchNotifications]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -47,6 +60,9 @@ export function NotificationDropdown() {
   }, [location]);
 
   const handleMarkAllAsRead = async () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+    
     try {
       await api.post('/api/notification/mark-all-read/');
       setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));

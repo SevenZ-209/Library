@@ -1,11 +1,24 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/utils';
-const navItems = [
-  { path: '/admin', icon: 'dashboard', label: 'Tổng quan' },
-  { path: '/admin/books', icon: 'menu_book', label: 'Quản lý Sách' },
-  { path: '/admin/borrows', icon: 'list_alt', label: 'Quản lý Mượn trả' },
-];
+
+// Sidebar nav items - sẽ được lọc theo role
+const getNavItems = (role: string | undefined) => {
+  const items = [];
+  
+  // Admin: chỉ thấy Tổng quan
+  if (role === 'admin') {
+    items.push({ path: '/admin', icon: 'dashboard', label: 'Tổng quan' });
+  }
+  
+  // Thủ thư: thấy Quản lý Sách và Quản lý Mượn trả, không thấy Tổng quan
+  if (role === 'librarian') {
+    items.push({ path: '/admin/books', icon: 'menu_book', label: 'Quản lý Sách' });
+    items.push({ path: '/admin/borrows', icon: 'list_alt', label: 'Quản lý Mượn trả' });
+  }
+  
+  return items;
+};
 
 
 export function AdminLayout() {
@@ -36,7 +49,7 @@ export function AdminLayout() {
 
         {/* Nav */}
         <nav className="flex-1 space-y-1">
-          {navItems.map((item) => {
+          {getNavItems(user?.role).map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <Link
@@ -65,13 +78,6 @@ export function AdminLayout() {
 
         {/* Bottom actions */}
         <div className="mt-auto pt-6 border-t border-teal-100/20 space-y-1">
-          <Link
-            to="/support"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:text-teal-600 hover:bg-teal-100/50 transition-all duration-200"
-          >
-            <span className="material-symbols-outlined">help</span>
-            <span className="text-sm font-medium font-[family-name:var(--font-label)]">Support</span>
-          </Link>
           <button
             onClick={logout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-error hover:bg-error/5 transition-all duration-200"
@@ -95,19 +101,6 @@ export function AdminLayout() {
           </div>
 
           <div className="flex items-center gap-6">
-            {/* Search */}
-            <div className="relative group">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
-                search
-              </span>
-              <input
-                type="text"
-                placeholder="Quick find resources..."
-                className="bg-surface-container-highest border-none rounded-full pl-10 pr-4 py-2 text-sm w-64 focus:ring-2 focus:ring-primary/20 transition-all outline-none font-[family-name:var(--font-body)]"
-              />
-            </div>
-
-            {/* User info */}
             {/* User info */}
             <div className="flex items-center gap-4">
               <Link 

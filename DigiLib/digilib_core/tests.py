@@ -149,3 +149,35 @@ class LibraryAPITest(TestCase):
         self.assertEqual(record.status, 'returned')
         self.assertIsNotNone(record.return_date)
         self.assertEqual(self.book.available_copies, 5)
+
+class CategoryAPITest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.reader = User.objects.create_user(username='reader_cat', password='password123', role='reader')
+        self.librarian = User.objects.create_user(username='librarian_cat', password='password123', role='librarian')
+        self.admin = User.objects.create_user(username='admin_cat', password='password123', role='admin')
+
+    def test_create_category_as_admin_success(self):
+        self.client.force_authenticate(user=self.admin)
+        response = self.client.post('/api/category/', {'name': 'Danh mục Admin'})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Category.objects.count(), 1)
+        self.assertEqual(Category.objects.first().name, 'Danh mục Admin')
+
+    def test_create_category_as_librarian_success(self):
+        self.client.force_authenticate(user=self.librarian)
+        response = self.client.post('/api/category/', {'name': 'Danh mục Thủ thư'})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Category.objects.count(), 1)
+        self.assertEqual(Category.objects.first().name, 'Danh mục Thủ thư')
+
+    def test_create_category_as_reader_forbidden(self):
+        self.client.force_authenticate(user=self.reader)
+        response = self.client.post('/api/category/', {'name': 'Danh mục Độc giả'})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Category.objects.count(), 0)
+
+    def test_create_category_unauthenticated(self):
+        response = self.client.post('/api/category/', {'name': 'Khách Vô Danh'})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(Category.objects.count(), 0)

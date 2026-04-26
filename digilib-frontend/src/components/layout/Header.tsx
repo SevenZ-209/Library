@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/utils';
 import { NotificationDropdown } from './NotificationDropdown';
+import styles from './Header.module.css';
 
 export function Header() {
   const location = useLocation();
@@ -10,31 +11,26 @@ export function Header() {
   const navLinks = [
     { href: '/', label: 'Trang chủ' },
     { href: '/collections', label: 'Bộ sưu tập' },
-    { href: '/manuscripts', label: 'Tài liệu' },
-    { href: '/exhibits', label: 'Triển lãm' },
     { href: '/my-archive', label: 'Tủ sách của tôi' },
   ];
 
   return (
-    <header className="glass-header fixed top-0 z-50 w-full pointer-events-auto" style={{ viewTransitionName: 'site-header' }}>
-      <div className="flex justify-between items-center px-8 h-20 max-w-screen-2xl mx-auto">
+    <header className={styles.header}>
+      <div className={styles.headerInner}>
         <Link
           to="/"
-          className="text-2xl font-headline font-extrabold tracking-tighter text-primary hover:opacity-80 transition-opacity"
+          className={styles.logo}
         >
           DigiLib
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className={styles.nav}>
           {navLinks.map((link) => (
             <Link
               key={link.href}
               to={link.href}
               className={cn(
-                'font-headline text-sm font-semibold tracking-tight transition-all duration-300 pb-1',
-                location.pathname === link.href
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-on-surface/60 hover:text-on-surface hover:bg-teal-50/50 px-3 py-1 rounded-lg'
+                location.pathname === link.href ? styles.navLinkActive : styles.navLinkInactive
               )}
             >
               {link.label}
@@ -42,15 +38,15 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className={styles.actions}>
           {isAuthenticated && user && <NotificationDropdown />}
 
           {isAuthenticated && user && (user.role === 'admin' || user.role === 'librarian') && (
             <Link
               to="/admin"
-              className="hidden md:flex items-center gap-2 bg-primary-container/20 text-primary px-4 py-2 rounded-full text-sm font-bold font-[family-name:var(--font-label)] hover:bg-primary/20 transition-colors"
+              className={styles.adminButton}
             >
-              <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+              <span className={cn("material-symbols-outlined", styles.adminIcon)}>admin_panel_settings</span>
               Trang Quản Trị
             </Link>
           )}
@@ -58,16 +54,16 @@ export function Header() {
           {isAuthenticated && user ? (
             <Link
               to="/profile"
-              className="flex items-center gap-2 p-1 rounded-full border-2 border-primary/20 hover:border-primary transition-all duration-300"
+              className={styles.profileButton}
             >
-              <span className="material-symbols-outlined text-3xl text-primary">
+              <span className={cn("material-symbols-outlined", styles.profileIcon)}>
                 account_circle
               </span>
             </Link>
           ) : (
             <Link
               to="/login"
-              className="btn-gradient px-5 py-2 rounded-full text-sm font-semibold font-[family-name:var(--font-label)]"
+              className={styles.loginButton}
             >
               Đăng nhập
             </Link>
