@@ -1,34 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { bookService } from '@/services/book.service';
 import { categoryService } from '@/services/category.service';
 import { useUIStore } from '@/stores/uiStore';
+import { useDebounce } from '@/hooks/useDebounce';
 import type { Book, Category } from '@/types/book.types';
+import { collectionService } from '@/services/collection.service';
+import type { Collection } from '@/types/collection.types';
 
 export default function ManageBooksPage() {
   const { user } = useAuthStore();
   const { addToast } = useUIStore();
   const [books, setBooks] = useState<Book[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [collections, setCollections] = useState<Collection[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebounce(searchQuery, 300);
+  
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
   
   const [formData, setFormData] = useState({
     title: '',
     author: '',
     category: '',
+    collection: '',
     total_copies: 1,
   });
 
   const fetchData = async () => {
     try {
-      const [booksData, catsData] = await Promise.all([
+      const [booksData, catsData, colsData] = await Promise.all([
         bookService.getBooks(),
-        categoryService.getCategories()
+        categoryService.getCategories(),
+        collectionService.getCollections()
       ]);
       setBooks(booksData.results || []);
       setCategories(catsData);
+      setCollections(colsData.results || []);
       if (catsData.length > 0) {
         setFormData(prev => ({ ...prev, category: catsData[0].id.toString() }));
       }
@@ -40,6 +53,17 @@ export default function ManageBooksPage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Filter books theo search query
+  const filteredBooks = useMemo(() => {
+    if (!debouncedSearch) return books;
+    const query = debouncedSearch.toLowerCase();
+    return books.filter(
+      book =>
+        book.title.toLowerCase().includes(query) ||
+        book.author.toLowerCase().includes(query)
+    );
+  }, [books, debouncedSearch]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,10 +85,17 @@ export default function ManageBooksPage() {
         data.append('image', imageFile); // Đính kèm file ảnh bìa
       }
   
-      await bookService.createBook(data); // Truyền FormData thay vì Object
+      const newBook = await bookService.createBook(data); // Truyền FormData thay vì Object
+      
+      // Thêm sách vào bộ sưu tập nếu có chọn
+      if (formData.collection) {
+        await collectionService.addBookToCollection(parseInt(formData.collection), newBook.id);
+      }
+      
       addToast('Đăng sách thành công!', 'success');
       setShowForm(false);
       setImageFile(null);
+      setFormData(prev => ({ ...prev, collection: '' }));
       fetchData();
     } catch {
       addToast('Thêm sách thất bại', 'error');
@@ -73,6 +104,28 @@ export default function ManageBooksPage() {
     }
   };
   
+
+  const handleCreateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCategoryName.trim()) {
+      addToast('Vui lòng nhập tên thể loại', 'warning');
+      return;
+    }
+    
+    setIsCreatingCategory(true);
+    try {
+      const newCategory = await categoryService.createCategory(newCategoryName.trim());
+      addToast('Đã thêm thể loại mới', 'success');
+      setCategories(prev => [...prev, newCategory]);
+      setFormData(prev => ({ ...prev, category: newCategory.id.toString() }));
+      setShowCategoryModal(false);
+      setNewCategoryName('');
+    } catch {
+      addToast('Lỗi khi thêm thể loại', 'error');
+    } finally {
+      setIsCreatingCategory(false);
+    }
+  };
 
   const handleDelete = async (id: number) => {
     if (!window.confirm("Bạn có chắc muốn xóa sách này? Dữ liệu không thể khôi phục!")) return;
@@ -105,6 +158,20 @@ export default function ManageBooksPage() {
         </button>
       </div>
 
+      {/* Thanh tìm kiếm */}
+      <div className="relative">
+        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">
+          search
+        </span>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Tìm kiếm theo tên sách, tác giả..."
+          className="w-full pl-12 pr-4 py-3 bg-surface-container-highest border-none rounded-xl text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all"
+        />
+      </div>
+
       {showForm && (
         <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/30 animate-in fade-in slide-in-from-top-4">
           <h3 className="font-headline font-bold text-xl mb-4 border-b border-outline-variant/20 pb-2">Thông tin sách mới</h3>
@@ -133,15 +200,25 @@ export default function ManageBooksPage() {
 
             <div className="space-y-2">
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest font-[family-name:var(--font-label)]">Thể loại</label>
-              <select 
-                value={formData.category}
-                onChange={e => setFormData({...formData, category: e.target.value})}
-                className="w-full px-4 py-3 bg-surface-container-highest border-none rounded-lg text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all"
-              >
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
-              </select>
+              <div className="flex items-center gap-2">
+                <select 
+                  value={formData.category}
+                  onChange={e => setFormData({...formData, category: e.target.value})}
+                  className="flex-1 px-4 py-3 bg-surface-container-highest border-none rounded-lg text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all"
+                >
+                  {categories.map(cat => (
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setShowCategoryModal(true)}
+                  className="w-12 h-12 shrink-0 flex items-center justify-center bg-surface-container-high hover:bg-primary hover:text-on-primary rounded-lg text-on-surface transition-all active:scale-95"
+                  title="Thêm thể loại mới"
+                >
+                  <span className="material-symbols-outlined">add</span>
+                </button>
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -153,6 +230,20 @@ export default function ManageBooksPage() {
                 onChange={e => setFormData({...formData, total_copies: parseInt(e.target.value)})}
                 className="w-full px-4 py-3 bg-surface-container-highest border-none rounded-lg text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all"
               />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest font-[family-name:var(--font-label)]">Thêm vào bộ sưu tập (Tùy chọn)</label>
+              <select 
+                value={formData.collection}
+                onChange={e => setFormData({...formData, collection: e.target.value})}
+                className="w-full px-4 py-3 bg-surface-container-highest border-none rounded-lg text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all"
+              >
+                <option value="">-- Không thêm vào bộ sưu tập nào --</option>
+                {collections.map(col => (
+                  <option key={col.id} value={col.id}>{col.name}</option>
+                ))}
+              </select>
             </div>
 
             <div className="space-y-2 md:col-span-2">
@@ -192,7 +283,7 @@ export default function ManageBooksPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-outline-variant/10">
-            {books.map((book) => (
+            {filteredBooks.map((book) => (
               <tr key={book.id} className="hover:bg-surface-container-low/50">
                 <td className="px-6 py-4 font-bold text-sm">{book.title}</td>
                 <td className="px-6 py-4 text-sm text-on-surface-variant">{book.author}</td>
@@ -207,14 +298,71 @@ export default function ManageBooksPage() {
                 </td>
               </tr>
             ))}
-            {books.length === 0 && (
+            {filteredBooks.length === 0 && (
               <tr>
-                <td colSpan={4} className="text-center py-8 text-on-surface-variant">Chưa có sách nào trong kho.</td>
+                <td colSpan={4} className="text-center py-8 text-on-surface-variant">
+                  {debouncedSearch ? `Không tìm thấy sách nào cho "${debouncedSearch}"` : 'Chưa có sách nào trong kho.'}
+                </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+
+      {/* Create Category Modal */}
+      {showCategoryModal && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setShowCategoryModal(false)}
+        >
+          <div 
+            className="bg-surface rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-6 py-4 border-b border-outline/10">
+              <h3 className="font-headline font-bold text-xl text-on-surface">Thêm Thể Loại Mới</h3>
+              <button 
+                onClick={() => setShowCategoryModal(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant"
+              >
+                <span className="material-symbols-outlined text-lg">close</span>
+              </button>
+            </div>
+            
+            <form onSubmit={handleCreateCategory} className="p-6">
+              <div className="space-y-2 mb-6">
+                <label className="text-sm font-bold text-on-surface-variant">Tên thể loại</label>
+                <input
+                  type="text"
+                  autoFocus
+                  value={newCategoryName}
+                  onChange={e => setNewCategoryName(e.target.value)}
+                  placeholder="VD: Tiểu thuyết viễn tưởng"
+                  className="w-full px-4 py-3 bg-surface-container-high border-none rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all text-on-surface"
+                />
+              </div>
+              
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCategoryModal(false)}
+                  className="px-5 py-2.5 rounded-full font-bold hover:bg-surface-container-high transition-colors text-on-surface"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCreatingCategory || !newCategoryName.trim()}
+                  className="bg-primary hover:bg-primary-container text-on-primary hover:text-on-primary-container px-6 py-2.5 rounded-full font-bold transition-colors disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isCreatingCategory && <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>}
+                  Thêm mới
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

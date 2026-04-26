@@ -20,8 +20,9 @@ export const bookService = {
   },
 
   async getBorrowHistory(bookId: number): Promise<BorrowRecord[]> {
-    const response = await api.get<BorrowRecord[]>(`/api/book/${bookId}/borrow-history/`);
-    return response.data;
+    const response = await api.get<BorrowRecord[] | { results: BorrowRecord[] }>(`/api/book/${bookId}/borrow-history/`);
+    const data = response.data;
+    return Array.isArray(data) ? data : (data?.results ?? []);
   },
 
   async getDashboardStats(): Promise<DashboardStats> {

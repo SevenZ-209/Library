@@ -172,6 +172,37 @@ services:
     networks:
       - digilib_net
 
+  # ----------------------------------------------------------
+  # 7. BACKEND TEST RUNNER
+  # ----------------------------------------------------------
+  test_runner:
+    build:
+      context: ./DigiLib
+      dockerfile: Dockerfile
+    container_name: digilib_test_runner
+    profiles:
+      - test
+    env_file:
+      - ./DigiLib/.env
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-librarydb}
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-Hxjdjdn863}
+      CELERY_BROKER_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672//
+      DJANGO_SETTINGS_MODULE: DigiLib.settings
+    volumes:
+      - ./DigiLib:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    command: python manage.py test
+    networks:
+      - digilib_net
+
 # ============================================================
 # VOLUMES
 # ============================================================

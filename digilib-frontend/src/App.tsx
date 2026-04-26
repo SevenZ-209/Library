@@ -5,19 +5,22 @@ import { AdminLayout } from '@/components/layout/AdminLayout';
 import { PrivateRoute } from '@/components/layout/PrivateRoute';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
-import HomePage from '@/pages/Home';
-import BookDetailPage from '@/pages/BookDetail';
-import LoginPage from '@/pages/Login';
-import RegisterPage from '@/pages/Register';
-import ProfilePage from '@/pages/Profile';
-import NotFoundPage from '@/pages/NotFound';
+import HomePage from '@/pages/home';
+import CollectionsPage from '@/pages/collections/Collections';
+import CollectionDetailPage from '@/pages/collections/CollectionDetail';
+import BookDetailPage from '@/pages/books/BookDetail';
+import LoginPage from '@/pages/auth/Login';
+import RegisterPage from '@/pages/auth/Register';
+import ProfilePage from '@/pages/user/Profile';
+import MyArchivePage from '@/pages/user/MyArchive';
+import NotFoundPage from '@/pages/error/NotFound';
 import DashboardPage from '@/pages/admin/Dashboard';
 import ManageBooksPage from '@/pages/admin/ManageBooks';
 import ManageBorrowRecordsPage from '@/pages/admin/ManageBorrowRecords';
 
 import '@/styles/view-transitions.css';
 import '@/styles/animations.css';
-import '@/index.css';
+import '@/styles/global.css';
 
 export default function App() {
   return (
@@ -34,10 +37,9 @@ export default function App() {
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/book/:id" element={<BookDetailPage />} />
-            <Route path="/collections" element={<HomePage />} />
-            <Route path="/manuscripts" element={<HomePage />} />
-            <Route path="/exhibits" element={<HomePage />} />
-            <Route path="/my-archive" element={<HomePage />} />
+            <Route path="/collections" element={<CollectionsPage />} />
+            <Route path="/collections/:id" element={<CollectionDetailPage />} />
+            <Route path="/my-archive" element={<MyArchivePage />} />
             <Route path="/search" element={<HomePage />} />
             <Route
               path="/profile"

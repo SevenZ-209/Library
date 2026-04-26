@@ -15,6 +15,7 @@ interface AuthState {
     first_name: string;
     last_name: string;
     username: string;
+    email?: string;
     password: string;
     phone?: string;
   }) => Promise<void>;
@@ -51,30 +52,35 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      register: async (data) => {
-        set({ isLoading: true, error: null });
-        try {
-          await authService.register(data);
-          await get().login(data.username, data.password);
-        } catch (err: unknown) {
-          const error = err as {
-            response?: {
-              data?: {
-                username?: string[];
-                password?: string[];
-                detail?: string;
-              };
-            };
+  register: async (data) => {
+    set({ isLoading: true, error: null });
+    try {
+      await authService.register({
+        ...data,
+        email: data.email || `${data.username}@digilib.local`,
+      });
+      await get().login(data.username, data.password);
+    } catch (err: unknown) {
+      const error = err as {
+        response?: {
+          data?: {
+            username?: string[];
+            email?: string[];
+            password?: string[];
+            detail?: string;
           };
-          const message =
-            error.response?.data?.username?.[0] ||
-            error.response?.data?.password?.[0] ||
-            error.response?.data?.detail ||
-            'Đăng ký thất bại. Vui lòng thử lại.';
-          set({ error: message, isLoading: false });
-          throw new Error(message);
-        }
-      },
+        };
+      };
+      const message =
+        error.response?.data?.username?.[0] ||
+        error.response?.data?.email?.[0] ||
+        error.response?.data?.password?.[0] ||
+        error.response?.data?.detail ||
+        'Đăng ký thất bại. Vui lòng thử lại.';
+      set({ error: message, isLoading: false });
+      throw new Error(message);
+    }
+  },
 
       logout: () => {
         authService.logout();

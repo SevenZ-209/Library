@@ -13,7 +13,7 @@ import '@/styles/view-transitions.css';
 export default function BookDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   const { addToast } = useUIStore();
 
   const [book, setBook] = useState<Book | null>(null);
@@ -25,18 +25,20 @@ export default function BookDetailPage() {
 
   useEffect(() => {
     if (!id) return;
+    const numericId = parseInt(id);
+    if (isNaN(numericId)) return;
 
     const fetchBookData = async () => {
       setIsLoading(true);
       try {
         const [bookData, historyData, relatedData] = await Promise.all([
-          bookService.getBook(parseInt(id)),
-          bookService.getBorrowHistory(parseInt(id)),
+          bookService.getBook(numericId),
+          bookService.getBorrowHistory(numericId),
           bookService.getBooks({ category_id: 0 }),
         ]);
         setBook(bookData);
         setBorrowHistory(historyData);
-        setRelatedBooks(relatedData.results.filter((b) => b.id !== parseInt(id)).slice(0, 4));
+        setRelatedBooks(relatedData.results.filter((b) => b.id !== numericId).slice(0, 4));
       } catch {
         addToast('Không thể tải thông tin sách', 'error');
       } finally {
@@ -53,6 +55,12 @@ export default function BookDetailPage() {
       return;
     }
 
+    // Chỉ độc giả mới được mượn sách
+    if (user?.role !== 'reader') {
+      addToast('Chỉ tài khoản độc giả mới có thể mượn sách.', 'warning');
+      return;
+    }
+
     if (!book) return;
 
     try {
@@ -60,9 +68,12 @@ export default function BookDetailPage() {
       await bookService.borrowBook(book.id);
       addToast('Giữ chỗ thành công! Vui lòng đến quầy nhận sách trong 24h.', 'success');
       setHasBorrowed(true);
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.detail || 'Không thể gửi yêu cầu mượn. Vui lòng thử lại.';
-      addToast(errorMsg, 'error');
+    } catch (err) {
+      const errorMsg =
+        typeof err === 'object' && err !== null && 'response' in err
+          ? (err as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          : undefined;
+      addToast(errorMsg || 'Không thể gửi yêu cầu mượn. Vui lòng thử lại.', 'error');
     } finally {
       setIsBorrowing(false);
     }
@@ -164,8 +175,8 @@ export default function BookDetailPage() {
             ))}
           </div>
 
-          {/* Borrow + Actions */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
+          {/* Borrow Button Container */}
+          <div className="flex items-center gap-4 mt-4">
             <button
               onClick={handleBorrow}
               disabled={book.available_copies === 0 || isBorrowing || hasBorrowed}
@@ -188,22 +199,7 @@ export default function BookDetailPage() {
                 </>
               )}
             </button>
-            <div className="flex items-center gap-2">
-              <button
-                className="p-3 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-highest transition-all"
-                title="Chia sẻ"
-              >
-                <span className="material-symbols-outlined">share</span>
-              </button>
-              <button
-                className="p-3 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-highest transition-all"
-                title="Yêu thích"
-              >
-                <span className="material-symbols-outlined">favorite</span>
-              </button>
-            </div>
           </div>
-
           {/* Description */}
           {book.description && (
             <div className="mt-8 space-y-4 max-w-3xl">

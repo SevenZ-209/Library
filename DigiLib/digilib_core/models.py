@@ -105,3 +105,32 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Thông báo cho {self.user.username}: {self.title}"
+
+
+class Collection(BaseModel):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    cover_image = CloudinaryField(null=True, blank=True)
+    curator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='curated_collections')
+    books = models.ManyToManyField(Book, through='CollectionBook', related_name='collections')
+    is_featured = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def book_count(self):
+        return self.collection_books.count()
+
+
+class CollectionBook(models.Model):
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name='collection_books')
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='collection_books')
+    added_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['collection', 'book']
+        ordering = ['-added_date']
+
+    def __str__(self):
+        return f"{self.collection.name} - {self.book.title}"

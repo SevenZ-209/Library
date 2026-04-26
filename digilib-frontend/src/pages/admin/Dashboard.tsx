@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/stores/authStore';
 import { useUIStore } from '@/stores/uiStore';
 import { bookService } from '@/services/book.service';
 import { StatsGrid } from '@/components/admin/StatsGrid';
@@ -6,6 +8,8 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 import type { DashboardStats } from '@/types/book.types';
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
   const { addToast } = useUIStore();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,8 +29,13 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
+    // Redirect librarian to their default workspace
+    if (user?.role === 'librarian') {
+      navigate('/admin/books', { replace: true });
+      return;
+    }
     fetchData();
-  }, []);
+  }, [user, navigate]);
 
 
 

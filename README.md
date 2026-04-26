@@ -151,6 +151,17 @@ Hệ thống sẽ quét, đổi trạng thái 2 phiếu thành `overdue` và t�
 
 ---
 
+## 🧪 Chạy Unit Test bằng Docker
+
+Dự án đã được thiết lập sẵn một service đặc biệt trong `docker-compose.yml` để chạy test (Kiểm thử tự động) mà không cần cài đặt môi trường Python local:
+
+```bash
+docker compose --profile test up test_runner
+```
+Lệnh này sẽ tự động chạy toàn bộ các bài Unit Test cho Backend (kiểm tra phân quyền, tạo danh mục, mượn trả sách, v.v.) bên trong môi trường Docker an toàn.
+
+---
+
 ## 🛠️ Cách 2: Chạy Local (Development)
 
 ### Yêu cầu
@@ -180,6 +191,9 @@ python manage.py seed_data                       # dữ liệu giả
 
 # 5. Khởi động server
 python manage.py runserver
+
+# 6. Chạy Unit Test (Tùy chọn)
+python manage.py test
 ```
 
 Backend chạy tại: `http://127.0.0.1:8000/`
@@ -225,8 +239,10 @@ celery -A DigiLib beat --loglevel=info
 |---|---|---|
 | `GET` | `/api/books/` | Danh sách sách (hỗ trợ filter, search) |
 | `GET` | `/api/books/{id}/` | Chi tiết một cuốn sách |
-| `GET` | `/api/categories/` | Danh sách thể loại |
+| `GET` / `POST` | `/api/category/` | Danh sách thể loại / Tạo thể loại mới (Admin/Thủ thư) |
 | `GET` | `/api/tags/` | Danh sách tags |
+| `GET` | `/api/collection/` | Danh sách các Bộ sưu tập sách |
+| `GET` | `/api/collection/{id}/` | Chi tiết một Bộ sưu tập |
 
 ### Mượn / Trả sách *(có Transaction, tự động cập nhật tồn kho)*
 | Method | Endpoint | Mô tả |
@@ -251,6 +267,7 @@ celery -A DigiLib beat --loglevel=info
 
 ```
 Library/
+├── .github/workflows/          # CI/CD Pipelines (Backend, Frontend, Docker)
 ├── docker-compose.yml          # Orchestration toàn bộ hệ thống
 ├── .env.docker.example         # Mẫu biến môi trường
 ├── DigiLib/                    # Django Backend
@@ -286,3 +303,5 @@ Library/
 - 📖 **Swagger UI** — Tài liệu API tự động
 - 🐳 **Docker Ready** — Chạy toàn bộ hệ thống bằng 1 lệnh
 - 🔄 **Transaction** — Mượn/trả sách an toàn với database transaction
+- 🤖 **CI/CD Pipeline** — 3 luồng GitHub Actions tự động build Frontend & test Backend
+- 📚 **Bộ sưu tập (Collections)** — Quản lý và gom nhóm sách theo chủ đề nổi bật

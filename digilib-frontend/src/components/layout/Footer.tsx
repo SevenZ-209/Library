@@ -1,26 +1,40 @@
 export function Footer() {
   return (
-    <footer className="bg-surface-container-low py-12 px-12 mt-auto">
-      <div className="flex flex-col md:flex-row justify-between items-center max-w-screen-2xl mx-auto gap-6">
-        <div className="flex flex-col gap-2 text-center md:text-left">
-          <span className="font-headline font-bold text-lg text-on-surface tracking-tight">
+    <footer className="bg-surface-container-low py-12 px-8 mt-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center max-w-7xl mx-auto">
+        <div>
+          <span className="font-headline font-bold text-xl text-on-surface block mb-2">
             DigiLib
           </span>
-          <p className="text-[10px] uppercase tracking-widest text-on-surface/40 font-[family-name:var(--font-label)]">
-            © 2024 DigiLib. Thư Viện Số. Mọi quyền được bảo lưu.
+          <p className="font-body text-sm leading-relaxed text-on-surface-variant">
+            © 2024 The Curated Archive. A Living Gallery of Knowledge.
           </p>
         </div>
-
-        <div className="flex flex-wrap justify-center gap-8">
-          {['Kho sách', 'Quyền riêng tư', 'Điều khoản', 'Hỗ trợ', 'Liên hệ'].map((item) => (
-            <a
-              key={item}
-              href="#"
-              className="text-[10px] uppercase tracking-widest text-on-surface/40 hover:text-primary transition-all duration-300 font-[family-name:var(--font-label)]"
-            >
-              {item}
-            </a>
-          ))}
+        <div className="flex flex-wrap gap-6 md:justify-end">
+          <a
+            href="#"
+            className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors"
+          >
+            Legal
+          </a>
+          <a
+            href="#"
+            className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors"
+          >
+            Accessibility
+          </a>
+          <a
+            href="#"
+            className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors"
+          >
+            Provenance
+          </a>
+          <a
+            href="#"
+            className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors"
+          >
+            Contact
+          </a>
         </div>
       </div>
     </footer>
