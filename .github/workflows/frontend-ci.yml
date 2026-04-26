@@ -2,7 +2,7 @@ name: Frontend CI
 
 on:
   push:
-    branches: [ "main", "master", "feature/*" ]
+    branches: [ "main", "master", "feat/*" ]
     paths:
       - 'digilib-frontend/**'
       - '.github/workflows/frontend-ci.yml'

@@ -2,7 +2,7 @@ name: Backend CI
 
 on:
   push:
-    branches: [ "main", "master", "feature/*" ]
+    branches: [ "main", "master", "feat/*" ]
     paths:
       - 'DigiLib/**'
       - '.github/workflows/backend-ci.yml'
