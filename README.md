@@ -147,6 +147,13 @@ docker exec digilib_backend python manage.py shell -c "from digilib_core.tasks i
 ```
 
 Hệ thống sẽ quét, đổi trạng thái 2 phiếu thành `overdue` và tự động gửi 2 email báo quá hạn đến `test.001.digilib@gmail.com`.
+Hoặc có thể dùng lệnh để ép trạng thái sách về borrow và trễ 2 ngày
+```powershell
+docker exec -it digilib_backend python manage.py shell -c "from digilib_core.models import BorrowRecord; from django.utils import timezone; from datetime import timedelta; r=BorrowRecord.objects.get(pk=<id_phieu_muon>); r.status='borrowed'; r.due_date=timezone.now()-timedelta(days=2); r.save();
+docker exec -it digilib_backend python manage.py shell -c "from digilib_core.tasks import check_overdue_books_and_notify; check_overdue_books_and_notify.delay()"
+```
+Kiểm tra bằng
+docker compose logs -f celery_worker
 *(Ghi chú: Trong môi trường thực tế, Celery Beat sẽ tự động gọi hàm quét này mỗi ngày lúc 8h sáng).*
 
 ---
