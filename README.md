@@ -336,6 +336,7 @@ Library/
 
 ### 1. Hệ thống Xác thực (Authentication)
 **Giao diện Đăng nhập và Đăng ký an toàn với JWT Authentication:**
+****
 ![Đăng nhập hệ thống](docs/screenshots/dang-nhap.png)
 
 ![Đăng ký tài khoản](docs/screenshots/dang-ky.png)
