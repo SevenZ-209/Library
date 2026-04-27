@@ -341,14 +341,14 @@ Library/
 
 ### 2. Giao diện Độc giả (Reader)
 **Trang chủ (Khám phá sách & Sách thịnh hành):**
-![Trang chủ DigiLib](docs/screenshots/trang-chu.jpg)
+![Trang chủ DigiLib](docs/screenshots/trang-chu.png)
 
 **Trang Chi tiết Sách & Các Bộ sưu tập nổi bật:**
-![Chi tiết sách](docs/screenshots/chi-tiet-sach.jpg)
-![Bộ sưu tập](docs/screenshots/collection.jpg)
+![Chi tiết sách](docs/screenshots/chi-tiet-sach.png)
+![Bộ sưu tập](docs/screenshots/collection.png)
 
 **Tủ sách cá nhân (Quản lý sách đang mượn & Lịch sử):**
-![Lịch sử mượn sách](docs/screenshots/archive.jpg)
+![Lịch sử mượn sách](docs/screenshots/archive.png)
 
 ### 3. Giao diện Quản trị (Admin & Librarian)
 **Dashboard Thống kê tổng quan:**
