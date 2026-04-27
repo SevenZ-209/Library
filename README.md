@@ -252,6 +252,17 @@ celery -A DigiLib beat --loglevel=info
 | `POST` | `/api/borrower/{id}/confirm-pickup/` | Thủ thư xác nhận giao sách |
 | `POST` | `/api/borrower/{id}/return/` | Thủ thư nhận lại sách |
 
+### Bộ sưu tập (Collections)
+| Method | Endpoint | Mô tả |
+|---|---|---|
+| `GET` | `/api/collection/` | Danh sách các bộ sưu tập công khai |
+| `POST` | `/api/collection/` | Tạo bộ sưu tập mới (Admin/Thủ thư) |
+| `GET` | `/api/collection/featured/` | Lấy danh sách bộ sưu tập nổi bật |
+| `GET` | `/api/collection/{id}/` | Chi tiết bộ sưu tập và danh sách sách bên trong |
+| `PATCH` | `/api/collection/{id}/` | Chỉnh sửa tên, mô tả hoặc ảnh bìa bộ sưu tập |
+| `POST` | `/api/collection/{id}/add-book/` | Thêm một cuốn sách vào bộ sưu tập |
+| `POST` | `/api/collection/{id}/remove-book/` | Rút một cuốn sách khỏi bộ sưu tập |
+
 ### Thống kê & Thông báo
 | Method | Endpoint | Mô tả |
 |---|---|---|
