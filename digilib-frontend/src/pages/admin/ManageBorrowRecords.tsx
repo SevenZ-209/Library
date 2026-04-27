@@ -112,7 +112,6 @@ export default function ManageBorrowRecords() {
             <tbody className="divide-y divide-gray-100">
               {filteredRecords.length === 0 ? (
                 <tr>
-
                   <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
                     Không có phiếu mượn nào phù hợp.
                   </td>
@@ -132,16 +131,17 @@ export default function ManageBorrowRecords() {
                         {record.book_title}
                       </div>
                     </td>
-
                     <td className="px-6 py-4 whitespace-nowrap">
                       {record.status === 'pending' ? (
                         <span className="text-sm text-gray-400 italic">Chưa giao sách</span>
+                      ) : record.status === 'cancelled' ? (
+                        <span className="text-sm text-gray-400 italic">Đã hủy</span>
                       ) : (
                         <div className="text-sm text-gray-600">{formatDate(record.borrow_date)}</div>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {record.status === 'pending' ? (
+                      {record.status === 'pending' || record.status === 'cancelled' ? (
                         <span className="text-sm text-gray-400 italic">-</span>
                       ) : (
                         <div className="text-sm text-gray-600">{formatDate(record.due_date)}</div>
@@ -154,6 +154,8 @@ export default function ManageBorrowRecords() {
                             ? 'success'
                             : record.status === 'overdue'
                             ? 'error'
+                            : record.status === 'cancelled'
+                            ? 'secondary'
                             : record.status === 'pending'
                             ? 'secondary'
                             : 'warning'
@@ -164,6 +166,8 @@ export default function ManageBorrowRecords() {
                           ? 'Đã trả'
                           : record.status === 'overdue'
                           ? 'Quá hạn'
+                          : record.status === 'cancelled'
+                          ? 'Đã hủy'
                           : record.status === 'pending'
                           ? 'Chờ duyệt'
                           : 'Đang mượn'}
