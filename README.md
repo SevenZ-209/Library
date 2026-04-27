@@ -337,6 +337,7 @@ Library/
 ### 1. Hệ thống Xác thực (Authentication)
 **Giao diện Đăng nhập và Đăng ký an toàn với JWT Authentication:**
 ![Đăng nhập hệ thống](docs/screenshots/dang-nhap.png)
+
 ![Đăng ký tài khoản](docs/screenshots/dang-ky.png)
 
 ### 2. Giao diện Độc giả (Reader)
@@ -345,6 +346,7 @@ Library/
 
 **Trang Chi tiết Sách & Các Bộ sưu tập nổi bật:**
 ![Chi tiết sách](docs/screenshots/chi-tiet-sach.png)
+
 ![Bộ sưu tập](docs/screenshots/collection.png)
 
 **Tủ sách cá nhân (Quản lý sách đang mượn & Lịch sử):**
