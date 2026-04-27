@@ -55,7 +55,6 @@ export default function BookDetailPage() {
       return;
     }
 
-    // Chỉ độc giả mới được mượn sách
     if (user?.role !== 'reader') {
       addToast('Chỉ tài khoản độc giả mới có thể mượn sách.', 'warning');
       return;
@@ -113,9 +112,7 @@ export default function BookDetailPage() {
 
   return (
     <div className="max-w-screen-2xl mx-auto px-8 pt-28 pb-32">
-      {/* Hero Split View */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-start mb-20">
-        {/* Left: Book Cover */}
         <div className="md:col-span-5 lg:col-span-4 sticky top-28">
           <div
             className="relative aspect-[2/3] rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,104,95,0.15)] group"
@@ -136,10 +133,9 @@ export default function BookDetailPage() {
           </div>
         </div>
 
-        {/* Right: Details */}
         <div className="md:col-span-7 lg:col-span-8 flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            {/* Category & Status */}
+
             <div className="flex items-center gap-3 mb-2">
               <Badge variant="secondary">{book.category_name}</Badge>
               <div className="flex items-center gap-1.5 px-3 py-1 bg-surface-container-high rounded-full">
@@ -154,7 +150,6 @@ export default function BookDetailPage() {
               </div>
             </div>
 
-            {/* Title */}
             <h1 className="text-5xl lg:text-7xl font-headline font-extrabold text-on-surface tracking-tighter leading-tight">
               {book.title}
             </h1>
@@ -163,7 +158,6 @@ export default function BookDetailPage() {
             </p>
           </div>
 
-          {/* Tags */}
           <div className="flex flex-wrap gap-2 py-4">
             {book.tags.map((tag) => (
               <span
@@ -175,7 +169,7 @@ export default function BookDetailPage() {
             ))}
           </div>
 
-          {/* Borrow Button Container */}
+
           <div className="flex items-center gap-4 mt-4">
             <button
               onClick={handleBorrow}
@@ -200,7 +194,7 @@ export default function BookDetailPage() {
               )}
             </button>
           </div>
-          {/* Description */}
+
           {book.description && (
             <div className="mt-8 space-y-4 max-w-3xl">
               <h3 className="text-2xl font-headline font-bold text-on-surface tracking-tight">
@@ -212,7 +206,7 @@ export default function BookDetailPage() {
             </div>
           )}
 
-          {/* Metadata */}
+
           <div className="flex flex-wrap gap-6 pt-4 border-t border-outline-variant/30">
             <div className="flex items-center gap-2 text-sm text-on-surface-variant">
               <span className="material-symbols-outlined text-lg">inventory_2</span>
@@ -226,7 +220,7 @@ export default function BookDetailPage() {
         </div>
       </div>
 
-      {/* Borrow History */}
+
       {borrowHistory.length > 0 && (
         <section className="mb-20 bg-surface-container-low rounded-3xl p-8 lg:p-12">
           <div className="flex justify-between items-end mb-8">
@@ -297,7 +291,7 @@ export default function BookDetailPage() {
         </section>
       )}
 
-      {/* Related Books */}
+
       {relatedBooks.length > 0 && (
         <section className="mb-12">
           <div className="flex items-center justify-between mb-8">

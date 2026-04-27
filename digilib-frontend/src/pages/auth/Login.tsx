@@ -57,7 +57,6 @@ export default function LoginPage() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Username Field */}
         <div className="space-y-2">
           <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-widest font-[family-name:var(--font-label)]">
             Tên đăng nhập
@@ -78,7 +77,6 @@ export default function LoginPage() {
           )}
         </div>
 
-        {/* Password Field */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-widest font-[family-name:var(--font-label)]">
@@ -101,7 +99,6 @@ export default function LoginPage() {
           )}
         </div>
 
-        {/* Remember Me + Forgot */}
         <div className="flex items-center justify-between py-2">
           <label className="flex items-center cursor-pointer group">
             <div className="relative">
@@ -129,7 +126,6 @@ export default function LoginPage() {
           </a>
         </div>
 
-        {/* Login Button */}
         <button
           type="submit"
           disabled={isLoading}

@@ -75,10 +75,8 @@ export default function CollectionDetailPage() {
 
   return (
     <div className="animate-in fade-in duration-500 pb-20 overflow-x-hidden">
-      {/* Hero Header Section - ĐÃ CHỈNH SỬA BỐ CỤC DỌC (PORTRAIT) */}
       <section className="relative -mt-8 mb-12 overflow-hidden rounded-b-[40px] bg-surface-container-low border-b border-outline-variant/30">
-        
-        {/* 1. Nền làm mờ (Blurred Background effect) */}
+
         <div className="absolute inset-0 -z-10">
           <img 
             src={coverImageUrl} 
@@ -88,10 +86,8 @@ export default function CollectionDetailPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-surface-container-low via-surface-container-low/80 to-transparent" />
         </div>
 
-        {/* 2. Container nội dung chính (Flex layout) */}
         <div className="max-w-screen-2xl mx-auto px-8 py-16 md:py-24 flex flex-col md:flex-row items-center md:items-start gap-12 md:gap-16 relative">
-          
-          {/* CỘT 1: Hình Cover Dạng Dọc (Portrait aspect-[2/3]) - Giống hình cuốn sách */}
+
           <div className="w-60 md:w-72 shrink-0 animate-slide-up">
             <div className="aspect-[2/3] rounded-3xl overflow-hidden shadow-2xl shadow-black/20 border-4 border-surface-container-lowest">
               <img 
@@ -101,8 +97,7 @@ export default function CollectionDetailPage() {
               />
             </div>
           </div>
-          
-          {/* CỘT 2: Nội dung text và nút bấm */}
+
           <div className="flex-1 flex flex-col gap-6 text-center md:text-left animate-slide-up" style={{animationDelay: '150ms'}}>
             <nav className="flex items-center gap-2 text-on-surface-variant text-sm font-medium justify-center md:justify-start">
               <Link to="/collections" className="hover:text-primary transition-colors">Bộ sưu tập</Link>
@@ -114,7 +109,7 @@ export default function CollectionDetailPage() {
               {collection.name}
             </h1>
             
-            {/* Thông tin Meta Badges */}
+
             <div className="flex flex-wrap items-center gap-4 text-on-surface-variant justify-center md:justify-start">
               <div className="flex items-center gap-2 bg-surface-container px-4 py-2 rounded-full border border-outline-variant/30">
                 <span className="material-symbols-outlined text-primary text-sm">person</span>
@@ -130,7 +125,7 @@ export default function CollectionDetailPage() {
               </div>
             </div>
 
-            {/* Nút Chỉnh sửa cho Admin/Librarian (Chuyển vị trí xuống dưới text) */}
+
             {isAdminOrLibrarian && (
               <div className="mt-6 flex justify-center md:justify-start">
                 <button 
@@ -146,7 +141,7 @@ export default function CollectionDetailPage() {
         </div>
       </section>
 
-      {/* Description Section */}
+
       <section className="px-8 max-w-screen-2xl mx-auto mb-16 animate-slide-up" style={{animationDelay: '300ms'}}>
         <div className="bg-surface-container-lowest p-8 rounded-3xl shadow-sm border border-outline-variant/20">
           <h2 className="text-xl font-bold mb-5 flex items-center gap-2.5 text-on-surface">
@@ -159,7 +154,6 @@ export default function CollectionDetailPage() {
         </div>
       </section>
 
-      {/* Books Grid Section */}
       <section className="px-8 max-w-screen-2xl mx-auto animate-slide-up" style={{animationDelay: '450ms'}}>
         <h2 className="font-headline text-3xl font-bold mb-8 flex items-center gap-3 text-on-surface">
           Sách trong bộ sưu tập
@@ -225,7 +219,6 @@ export default function CollectionDetailPage() {
         )}
       </section>
 
-      {/* Edit Collection Modal */}
       {isEditModalOpen && collection && (
         <EditCollectionModal 
           collection={collection} 

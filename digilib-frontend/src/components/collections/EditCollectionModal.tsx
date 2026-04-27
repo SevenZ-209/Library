@@ -21,15 +21,12 @@ export default function EditCollectionModal({ collection, onClose, onSuccess }: 
   const [previewUrl, setPreviewUrl] = useState<string | null>(getImageUrl(collection.cover_image) || null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // --- LOGIC QUẢN LÝ SÁCH CHỜ THÊM ---
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<Book[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   
-  // Danh sách sách "đang chờ" để lưu (chưa push lên server)
   const [stagedBooks, setStagedBooks] = useState<Book[]>([]);
 
-  // Tìm kiếm sách (Debounce)
   useEffect(() => {
     if (searchTerm.length < 2) {
       setSearchResults([]);
@@ -50,11 +47,8 @@ export default function EditCollectionModal({ collection, onClose, onSuccess }: 
     return () => clearTimeout(delaySearch);
   }, [searchTerm]);
 
-  // Chỉ thêm vào danh sách chờ, CHƯA gọi API
   const handleStageBook = (book: Book) => {
-    // Kiểm tra xem sách đã có trong database của bộ sưu tập chưa
     const isAlreadyInDB = collection.books?.some((cb: any) => cb.book_id === book.id);
-    // Kiểm tra xem sách đã có trong danh sách chờ chưa
     const isAlreadyStaged = stagedBooks.some(b => b.id === book.id);
 
     if (isAlreadyInDB || isAlreadyStaged) {
@@ -67,7 +61,6 @@ export default function EditCollectionModal({ collection, onClose, onSuccess }: 
     setSearchResults([]);
   };
 
-  // Xóa khỏi danh sách chờ
   const handleUnstageBook = (bookId: number) => {
     setStagedBooks(prev => prev.filter(b => b.id !== bookId));
   };
@@ -80,12 +73,10 @@ export default function EditCollectionModal({ collection, onClose, onSuccess }: 
     }
   };
 
-  // HÀM LƯU TỔNG THỂ
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      // 1. Cập nhật thông tin cơ bản (Tên, Mô tả, Ảnh)
       const submitData = new FormData();
       submitData.append('name', formData.name);
       submitData.append('description', formData.description);
@@ -93,14 +84,13 @@ export default function EditCollectionModal({ collection, onClose, onSuccess }: 
 
       await collectionService.updateCollection(collection.id, submitData);
 
-      // 2. Chỉ khi cập nhật thông tin xong mới push danh sách sách chờ lên server
       if (stagedBooks.length > 0) {
         await Promise.all(
           stagedBooks.map(book => collectionService.addBookToCollection(collection.id, book.id))
         );
       }
 
-      onSuccess(); // Load lại dữ liệu trang Detail
+      onSuccess(); 
     } catch (error) {
       alert('Cập nhật thất bại!');
       console.error(error);
@@ -121,7 +111,6 @@ export default function EditCollectionModal({ collection, onClose, onSuccess }: 
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* PHẦN 1: THÔNG TIN CƠ BẢN */}
           <div className="space-y-5">
             <div className="flex items-center gap-2 text-primary">
               <span className="material-symbols-outlined text-sm">edit_note</span>
@@ -157,7 +146,6 @@ export default function EditCollectionModal({ collection, onClose, onSuccess }: 
 
           <div className="h-px bg-outline-variant/20" />
 
-          {/* PHẦN 2: CHỌN SÁCH CHỜ LƯU */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-primary">
               <span className="material-symbols-outlined text-sm">library_add</span>
@@ -173,7 +161,6 @@ export default function EditCollectionModal({ collection, onClose, onSuccess }: 
                 placeholder="Tìm tên sách để đưa vào danh sách chờ..."
               />
               
-              {/* Dropdown kết quả tìm kiếm */}
               {searchTerm.length >= 2 && (
                 <div className="absolute z-10 top-full left-0 right-0 mt-3 bg-surface-container-high rounded-2xl shadow-2xl border border-outline-variant/30 overflow-hidden animate-in slide-in-from-top-2 duration-200">
                   {isSearching ? (
@@ -217,7 +204,6 @@ export default function EditCollectionModal({ collection, onClose, onSuccess }: 
               )}
             </div>
 
-            {/* HIỂN THỊ DANH SÁCH SÁCH ĐANG CHỜ LƯU */}
             {stagedBooks.length > 0 && (
               <div className="bg-surface-container-low rounded-2xl p-4 space-y-3">
                 <p className="text-xs font-bold text-on-surface-variant flex items-center gap-2">
@@ -246,7 +232,6 @@ export default function EditCollectionModal({ collection, onClose, onSuccess }: 
             )}
           </div>
 
-          {/* FOOTER ACTIONS */}
           <div className="flex justify-end gap-3 pt-6 border-t border-outline-variant/20">
             <button 
                 type="button" 

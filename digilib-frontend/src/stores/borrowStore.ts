@@ -12,6 +12,7 @@ export interface BorrowRecord {
   status: 'pending' | 'borrowed' | 'returned' | 'overdue' | 'cancelled';
   note: string | null;
   book_id?: number;
+  book_image?: string | null;
 }
 
 interface BorrowState {

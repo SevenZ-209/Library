@@ -54,7 +54,6 @@ export default function ManageBooksPage() {
     fetchData();
   }, []);
 
-  // Filter books theo search query
   const filteredBooks = useMemo(() => {
     if (!debouncedSearch) return books;
     const query = debouncedSearch.toLowerCase();
@@ -74,7 +73,6 @@ export default function ManageBooksPage() {
   
     setIsSubmitting(true);
     try {
-      // Sử dụng FormData để có thể gửi file
       const data = new FormData();
       data.append('title', formData.title);
       data.append('author', formData.author);
@@ -82,12 +80,11 @@ export default function ManageBooksPage() {
       data.append('total_copies', formData.total_copies.toString());
       data.append('available_copies', formData.total_copies.toString());
       if (imageFile) {
-        data.append('image', imageFile); // Đính kèm file ảnh bìa
+        data.append('image', imageFile); 
       }
   
-      const newBook = await bookService.createBook(data); // Truyền FormData thay vì Object
-      
-      // Thêm sách vào bộ sưu tập nếu có chọn
+      const newBook = await bookService.createBook(data); 
+
       if (formData.collection) {
         await collectionService.addBookToCollection(parseInt(formData.collection), newBook.id);
       }
@@ -158,7 +155,7 @@ export default function ManageBooksPage() {
         </button>
       </div>
 
-      {/* Thanh tìm kiếm */}
+
       <div className="relative">
         <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">
           search
@@ -309,7 +306,6 @@ export default function ManageBooksPage() {
         </table>
       </div>
 
-      {/* Create Category Modal */}
       {showCategoryModal && (
         <div 
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200"

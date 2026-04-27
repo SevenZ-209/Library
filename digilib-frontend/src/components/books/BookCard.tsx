@@ -29,7 +29,6 @@ export function BookCard({ book, index = 0 }: BookCardProps) {
         opacity: 0,
       }}
     >
-      {/* Cover Image */}
       <Link
         to={`/book/${book.id}`}
         className="block"
@@ -50,7 +49,6 @@ export function BookCard({ book, index = 0 }: BookCardProps) {
             </div>
           )}
 
-          {/* Status dot */}
           <div className="absolute top-2 right-2 flex items-center gap-1.5 px-2 py-1 bg-surface/80 backdrop-blur-sm rounded-full">
             <span className={`w-2 h-2 rounded-full ${dot}`} />
             <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface font-[family-name:var(--font-label)]">
@@ -60,7 +58,6 @@ export function BookCard({ book, index = 0 }: BookCardProps) {
         </div>
       </Link>
 
-      {/* Content */}
       <div className="flex-grow">
         <div className="flex justify-between items-start mb-2">
           <Badge variant="default" size="sm">
@@ -76,7 +73,6 @@ export function BookCard({ book, index = 0 }: BookCardProps) {
         </p>
       </div>
 
-      {/* Action Button */}
       <Link to={`/book/${book.id}`}>
         <button className="mt-4 w-full py-3 rounded-full bg-surface-container-high hover:bg-primary hover:text-white transition-all duration-300 font-[family-name:var(--font-label)] text-sm font-semibold flex items-center justify-center gap-2">
           <span className="material-symbols-outlined text-lg">visibility</span>

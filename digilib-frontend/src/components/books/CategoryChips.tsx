@@ -12,7 +12,6 @@ export function CategoryChips({ categories, selected, onSelect }: CategoryChipsP
 
   return (
     <div className="flex flex-wrap justify-center gap-3">
-      {/* All */}
       <button
         onClick={() => onSelect(null)}
         className={cn(
@@ -25,7 +24,6 @@ export function CategoryChips({ categories, selected, onSelect }: CategoryChipsP
         {allLabel}
       </button>
 
-      {/* Category chips */}
       {categories.map((cat) => (
         <button
           key={cat.id}

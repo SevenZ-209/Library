@@ -3,7 +3,6 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Colors - Archivial Design System */
   --color-primary: #00685f;
   --color-primary-container: #008378;
   --color-primary-fixed: #89f5e7;
@@ -58,12 +57,10 @@
   --color-inverse-on-surface: #edf2f0;
   --color-inverse-primary: #6bd8cb;
 
-  /* Fonts */
   --font-headline: 'Manrope', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-label: 'Inter', sans-serif;
 
-  /* Border Radius */
   --radius-sm: 0.125rem;
   --radius-md: 0.25rem;
   --radius-lg: 0.5rem;
@@ -72,7 +69,6 @@
   --radius-full: 0.75rem;
 }
 
-/* Base Styles */
 body {
   font-family: var(--font-body);
   background-color: var(--color-surface);
@@ -86,7 +82,6 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-headline);
 }
 
-/* Material Symbols Outlined */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   display: inline-block;
@@ -98,13 +93,11 @@ h1, h2, h3, h4, h5, h6 {
   direction: ltr;
 }
 
-/* Selection */
 ::selection {
   background-color: var(--color-primary-container);
   color: var(--color-on-primary-container);
 }
 
-/* Glassmorphism Utilities */
 .glass-header {
   background: rgba(245, 250, 248, 0.85);
   -webkit-backdrop-filter: blur(20px);
@@ -119,7 +112,6 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 1rem;
 }
 
-/* Primary Gradient Button */
 .btn-gradient {
   background: linear-gradient(135deg, #00685f 0%, #008378 100%);
   color: white;
@@ -131,7 +123,6 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-1px);
 }
 
-/* Input Focus - Inner Glow */
 .input-focus {
   background: #dee4e1;
   border: none;
@@ -142,7 +133,6 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: inset 0 0 0 2px #00685f;
 }
 
-/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -158,10 +148,8 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-outline);
 }
 
-/* Focus visible */
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-/* Hide scrollbar utility */

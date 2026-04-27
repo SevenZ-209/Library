@@ -33,6 +33,7 @@ export interface BorrowRecord {
   return_date: string | null;
   status: 'pending' | 'borrowed' | 'returned' | 'overdue' | 'cancelled';
   note: string;
+  book_image?: string | null;
 }
 
 export interface DashboardStats {
