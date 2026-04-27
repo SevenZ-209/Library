@@ -285,37 +285,31 @@ celery -A DigiLib beat --loglevel=info
 
 ```
 Library/
-├── .github/workflows/          # CI/CD Pipelines (Backend, Frontend, Docker)
-├── docker-compose.yml          # Orchestration toàn bộ hệ thống
-├── .env.docker.example         # Mẫu biến môi trường
-├── DigiLib/                    # Django Backend
-│   ├── Dockerfile
-│   ├── .env                    # Secrets (bị gitignore)
-│   ├── requirements.txt
-│   ├── backup_thuvien.json     # Fixture dữ liệu thật
-│   ├── DigiLib/                # Config Django
-│   │   ├── settings.py
-│   │   ├── urls.py
-│   │   └── celery.py
-│   └── digilib_core/           # App chính
-│       ├── models.py           # User, Book, BorrowRecord, Notification...
-│       ├── views.py            # API ViewSets
-│       ├── serializers.py
-│       ├── tasks.py            # Celery tasks (gửi email)
-│       └── urls.py
-└── digilib-frontend/           # React Frontend (Vite + TS)
-    ├── Dockerfile
-    ├── nginx.conf              # Cấu hình Nginx cho SPA
-    ├── src/
-    │   ├── pages/              # Tổ chức theo tính năng (Feature-based)
-    │   │   ├── home/           # Giao diện chính + CSS Module
-    │   │   ├── auth/           # Đăng nhập/Đăng ký
-    │   │   ├── collections/    # Quản lý bộ sưu tập
-    │   │   └── ...
-    │   ├── components/         # UI Components dùng chung
-    │   ├── styles/             # Global CSS & Design Tokens
-    │   └── services/           # API Services (Axios)
-    └── package.json
+├── .github/workflows/          # Cấu hình CI/CD Pipelines (GitHub Actions)
+├── docs/                       # Tài liệu kiến trúc và quyết định kỹ thuật
+├── docker-compose.yml          # Cấu hình Orchestration cho môi trường cục bộ
+├── backend/                    # Mã nguồn Backend (Django REST Framework)
+│   ├── DigiLib/                # Cấu hình cốt lõi của Server
+│   ├── digilib_core/           # Ứng dụng nghiệp vụ chính (Business Logic)
+│   ├── backup_thuvien.json     # Dữ liệu sao lưu (Backup)
+│   ├── Dockerfile              # Kịch bản đóng gói Docker cho Backend
+│   └── requirements.txt        # Danh sách thư viện Python phụ thuộc
+└── digilib-frontend/           # Mã nguồn Frontend (React + TypeScript + Vite)
+    ├── public/                 # Tài nguyên tĩnh công khai (Icons, Favicon)
+    ├── src/                    # Mã nguồn chính của ứng dụng Web
+    │   ├── assets/             # Tài nguyên tĩnh (Hình ảnh)
+    │   ├── components/         # Các UI component dùng chung và đặc thù
+    │   ├── hooks/              # Custom React Hooks
+    │   ├── lib/                # Các hàm tiện ích (Utility functions)
+    │   ├── pages/              # Giao diện chia theo cụm tính năng
+    │   ├── services/           # Lớp giao tiếp gọi API
+    │   ├── stores/             # Lớp quản lý trạng thái toàn cục
+    │   ├── styles/             # Quản lý CSS và hiệu ứng chuyển động
+    │   └── types/              # Định nghĩa kiểu dữ liệu (TypeScript Interfaces)
+    ├── nginx.conf              # Cấu hình Web Server Nginx để phục vụ Frontend
+    ├── vite.config.ts          # Cấu hình công cụ Build Vite
+    └── Dockerfile              # Kịch bản đóng gói Docker cho Frontend
+
 ```
 
 ---
