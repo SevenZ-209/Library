@@ -4,6 +4,27 @@ DigiLib là hệ thống quản lý thư viện hiện đại gồm **Backend RE
 
 ---
 
+## 👥 Thành viên nhóm
+
+| STT | MSSV | Họ tên | Vai trò |
+|:---:|---|---|---|
+| 1 | 2351010175 | Nguyễn Trần Minh Quân | Xây dựng Frontend, UI/UX & Tính năng tìm kiếm |
+| 2 | 2351010099 | Lê Minh Đăng Khoa | Xây dựng API Backend, Database & Quản trị hệ thống |
+| 3 | 2351010124 | Lê Duy Mạnh | Thiết lập DevOps, RabbitMQ & Tác vụ chạy ngầm |
+
+---
+
+## 💻 Công nghệ sử dụng
+
+- **Backend:** Python, Django 6, Django REST Framework
+- **Frontend:** React 19, TypeScript, Vite, TailwindCSS
+- **Database:** MySQL 8.0
+- **Message Queue & Workers:** RabbitMQ, Celery
+- **Container & Deploy:** Docker, Docker Compose
+- **CI/CD Pipelines:** GitHub Actions
+
+---
+
 ## 🏗️ Kiến trúc hệ thống
 
 | Service | Mô tả | Port |
@@ -312,7 +333,6 @@ Library/
 
 ```
 
----
 
 ## ⚙️ Tính năng nổi bật
 
@@ -326,3 +346,10 @@ Library/
 - 🤖 **CI/CD Pipeline** — 3 luồng GitHub Actions tự động build Frontend & test Backend
 - 📚 **Bộ sưu tập (Collections)** — Quản lý và gom nhóm sách theo chủ đề nổi bật
 - 🎨 **Modern UI/UX** — Giao diện được tối ưu hóa với Material Symbols, thiết kế theo chuẩn Modern Web và cấu trúc mã nguồn Feature-based chuyên nghiệp.
+
+
+## 📚 Tài liệu tham khảo
+- API Documentation (Swagger): http://localhost:8000/swagger/
+- Tài liệu Kiến trúc (ADRs): Xem tại thư mục docs/adrs/
+- Mã nguồn Backend: Thư mục backend/
+- Mã nguồn Frontend: Thư mục digilib-frontend/
