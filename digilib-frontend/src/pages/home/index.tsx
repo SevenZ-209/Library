@@ -68,7 +68,7 @@ export default function HomePage() {
     fetchDataWithLoading();
   }, [fetchDataWithLoading]);
 
-  // Stagger animation for hero section
+
   useEffect(() => {
     const elements = document.querySelectorAll('.animate-slide-up');
     elements.forEach((el, i) => {
@@ -78,14 +78,14 @@ export default function HomePage() {
 
   return (
     <div className={styles.pageWrapper}>
-      {/* Hero Search Section */}
+
       <section className={styles.heroSection}>
         <h1 className={`${styles.heroTitle} bg-gradient-to-r from-primary to-primary-container bg-clip-text text-transparent`}>
           Khám phá{' '}
           <span>DigiLib</span>
         </h1>
 
-        {/* Search Input */}
+
         <div className={styles.searchWrapper}>
           <div className={styles.searchIcon}>
             <span className="material-symbols-outlined">search</span>
@@ -99,16 +99,13 @@ export default function HomePage() {
           />
         </div>
 
-        {/* Category Chips - Horizontal Scroll with Limit & Expand */}
+
         <div className={styles.categorySection}>
           <div className={styles.categoryContainer}>
-            {/* Gradient fade left */}
             <div className={styles.fadeLeft} />
             
-            {/* Gradient fade right */}
             <div className={styles.fadeRight} />
             
-            {/* Nút scroll trái */}
             <button
               onClick={() => {
                 const container = document.getElementById('category-scroll');
@@ -120,7 +117,6 @@ export default function HomePage() {
               <span className="material-symbols-outlined text-sm">chevron_left</span>
             </button>
             
-            {/* Nút scroll phải */}
             <button
               onClick={() => {
                 const container = document.getElementById('category-scroll');
@@ -132,7 +128,6 @@ export default function HomePage() {
               <span className="material-symbols-outlined text-sm">chevron_right</span>
             </button>
 
-            {/* Scrollable container */}
             <div
               id="category-scroll"
               className={styles.categoryScroll}
@@ -203,7 +198,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Trending Books Carousel */}
       {!searchQuery && selectedCategory === null && trendingBooks.length > 0 && (
         <section className={styles.trendingSection} style={{ animationDelay: '300ms' }}>
           <div className={styles.sectionHeader}>
@@ -212,7 +206,6 @@ export default function HomePage() {
               Sách Thịnh Hành
             </h2>
             
-            {/* Cụm nút điều hướng Slide (Chỉ hiện trên màn hình máy tính) */}
             <div className={styles.carouselNavButtons}>
               <button 
                 onClick={() => scrollCarousel('left')}
@@ -244,7 +237,6 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Book Grid */}
       <section className={styles.bookSection}>
         {isLoading ? (
           <div className={styles.bookGrid}>
@@ -272,11 +264,9 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Pagination THẬT */}
         {totalPages > 1 && (
           <nav aria-label="Library pagination" className={styles.pagination}>
             
-            {/* Nút Lùi */}
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
@@ -285,7 +275,6 @@ export default function HomePage() {
               <span className="material-symbols-outlined">chevron_left</span>
             </button>
             
-            {/* Danh sách số trang */}
             <div className={styles.pageList}>
               {(() => {
                 const pages = [];
@@ -320,7 +309,6 @@ export default function HomePage() {
               })()}
             </div>
 
-            {/* Nút Tiến */}
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
@@ -333,7 +321,6 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* Category Selection Modal */}
       {showCategoryModal && (
         <div 
           className={styles.modalOverlay}

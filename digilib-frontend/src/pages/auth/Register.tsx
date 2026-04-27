@@ -52,7 +52,6 @@ export default function RegisterPage() {
       addToast('Đăng ký thành công!', 'success');
       navigate('/');
     } catch {
-      // Error handled in store
     }
   };
 
@@ -75,7 +74,6 @@ export default function RegisterPage() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {/* Name Fields */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-widest ml-1 font-[family-name:var(--font-label)]">
@@ -111,7 +109,6 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Username */}
         <div className="space-y-2">
           <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-widest ml-1 font-[family-name:var(--font-label)]">
             Tên đăng nhập
@@ -132,7 +129,6 @@ export default function RegisterPage() {
           )}
         </div>
 
-        {/* Email */}
         <div className="space-y-2">
           <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-widest ml-1 font-[family-name:var(--font-label)]">
             Địa chỉ Email
@@ -153,7 +149,6 @@ export default function RegisterPage() {
           )}
         </div>
 
-        {/* Password */}
         <div className="space-y-2">
           <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-widest ml-1 font-[family-name:var(--font-label)]">
             Mật khẩu
@@ -177,7 +172,6 @@ export default function RegisterPage() {
           )}
         </div>
 
-        {/* Confirm Password */}
         <div className="space-y-2">
           <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-widest ml-1 font-[family-name:var(--font-label)]">
             Xác nhận mật khẩu
@@ -198,7 +192,6 @@ export default function RegisterPage() {
           )}
         </div>
 
-        {/* CTA */}
         <div className="pt-4">
           <button
             type="submit"
@@ -220,7 +213,6 @@ export default function RegisterPage() {
         </div>
       </form>
 
-      {/* Alternative Action */}
       <div className="mt-8 pt-8 border-t border-outline-variant/10 text-center">
         <p className="text-sm text-on-surface-variant">
           Bạn đã có tài khoản?{' '}
@@ -233,7 +225,6 @@ export default function RegisterPage() {
         </p>
       </div>
 
-      {/* Trust Badges */}
       <div className="mt-8 flex items-center justify-center gap-6 opacity-60 grayscale hover:grayscale-0 transition-all">
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-lg">verified_user</span>

@@ -27,13 +27,11 @@ export default function App() {
     <ErrorBoundary>
       <BrowserRouter>
         <Routes>
-          {/* Auth Routes */}
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Route>
 
-          {/* Main Layout Routes */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/book/:id" element={<BookDetailPage />} />
@@ -51,7 +49,6 @@ export default function App() {
             />
           </Route>
 
-          {/* Admin Routes */}
           <Route
             path="/admin"
             element={
@@ -65,7 +62,6 @@ export default function App() {
             <Route path="borrows" element={<ManageBorrowRecordsPage />} />
           </Route>
 
-          {/* 404 */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>

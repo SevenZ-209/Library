@@ -103,6 +103,7 @@ export default function ManageBorrowRecords() {
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Mã phiếu</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Độc giả</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Sách</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ngày mượn</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Hạn trả</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Trạng thái</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Hành động</th>
@@ -111,7 +112,8 @@ export default function ManageBorrowRecords() {
             <tbody className="divide-y divide-gray-100">
               {filteredRecords.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
                     Không có phiếu mượn nào phù hợp.
                   </td>
                 </tr>
@@ -130,8 +132,20 @@ export default function ManageBorrowRecords() {
                         {record.book_title}
                       </div>
                     </td>
+
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-600">{formatDate(record.due_date)}</div>
+                      {record.status === 'pending' ? (
+                        <span className="text-sm text-gray-400 italic">Chưa giao sách</span>
+                      ) : (
+                        <div className="text-sm text-gray-600">{formatDate(record.borrow_date)}</div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {record.status === 'pending' ? (
+                        <span className="text-sm text-gray-400 italic">-</span>
+                      ) : (
+                        <div className="text-sm text-gray-600">{formatDate(record.due_date)}</div>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       <Badge

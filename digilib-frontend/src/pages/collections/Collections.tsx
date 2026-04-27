@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDebounce } from '@/hooks/useDebounce';
 import { collectionService } from '@/services/collection.service';
-import { bookService } from '@/services/book.service'; // Thêm import bookService
+import { bookService } from '@/services/book.service';
 import { getImageUrl } from '@/lib/utils';
 import type { Collection } from '@/types/collection.types';
-import type { Book } from '@/types/book.types'; // Thêm import Book
+import type { Book } from '@/types/book.types';
 import { useAuthStore } from '@/stores/authStore';
 import '@/styles/view-transitions.css';
 
@@ -47,7 +47,6 @@ export default function CollectionsPage() {
       setTotalPages(Math.ceil(totalItems / 8));
     } catch (err) {
       console.error('Failed to fetch collections:', err);
-      // Khi lỗi, chỉ cần đưa state về rỗng là xong
       setFeaturedCollection(null);
       setCollections([]);
       setTotalPages(1);
@@ -59,7 +58,6 @@ export default function CollectionsPage() {
     fetchData().finally(() => setIsLoading(false));
   }, [fetchData]);
 
-  // Stagger animation
   useEffect(() => {
     const elements = document.querySelectorAll('.animate-slide-up');
     elements.forEach((el, i) => {
@@ -69,7 +67,7 @@ export default function CollectionsPage() {
 
   return (
     <div className="animate-in fade-in duration-500">
-      {/* Hero Search Section */}
+
       <section className="mb-12 flex flex-col items-center text-center max-w-4xl mx-auto px-8">
         <h1 className="font-headline text-5xl md:text-7xl font-extrabold tracking-tight text-on-surface mb-6 leading-tight animate-slide-up">
           Bộ sưu tập
@@ -78,7 +76,7 @@ export default function CollectionsPage() {
           Khám phá những tuyển tập được chọn lọc bởi các chuyên gia
         </p>
 
-        {/* Search Input */}
+
         <div className="w-full relative group animate-slide-up">
           <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none text-outline">
             <span className="material-symbols-outlined">search</span>
@@ -93,24 +91,24 @@ export default function CollectionsPage() {
         </div>
       </section>
 
-      {/* Featured Collection Hero */}
+
       {featuredCollection && !searchQuery && (
         <section className="px-8 mb-12 max-w-screen-2xl mx-auto animate-slide-up">
           <div 
             className="relative rounded-2xl overflow-hidden group cursor-pointer shadow-lg shadow-primary/10"
             onClick={() => navigate(`/collections/${featuredCollection.id}`)}
           >
-            {/* Background Image */}
+
             <img 
               src={getImageUrl(featuredCollection.cover_image) || 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1600'}
               alt="Featured Collection"
               className="w-full h-[350px] object-cover transition-transform duration-700 group-hover:scale-105"
             />
             
-            {/* Gradient Overlay */}
+
             <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-transparent" />
             
-            {/* Content */}
+
             <div className="absolute inset-0 flex flex-col justify-center p-10 md:p-16">
               <span className="text-sm font-semibold tracking-wider text-white/80 uppercase mb-2 font-[family-name:var(--font-label)]">
                 Bộ sưu tập nổi bật
@@ -130,9 +128,7 @@ export default function CollectionsPage() {
         </section>
       )}
 
-      {/* Collections Grid */}
       <section className="px-8 pb-20 max-w-screen-2xl mx-auto">
-        {/* Section Header */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="font-headline text-2xl font-bold text-on-surface flex items-center gap-2">
             <span className="material-symbols-outlined text-primary">collections_bookmark</span>
@@ -188,7 +184,6 @@ export default function CollectionsPage() {
           </div>
         )}
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <nav aria-label="Collections pagination" className="mt-16 flex justify-center items-center gap-2">
             <button
@@ -272,7 +267,6 @@ function CollectionCard({ collection, onClick, index = 0 }: { collection: Collec
         opacity: 0,
       }}
     >
-      {/* Cover Image */}
       <div className="aspect-video overflow-hidden relative">
         {collection.cover_image ? (
           <img 
@@ -287,13 +281,11 @@ function CollectionCard({ collection, onClick, index = 0 }: { collection: Collec
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
         
-        {/* Items count badge */}
         <span className="absolute bottom-3 right-3 bg-surface/90 text-primary px-3 py-1 rounded-full font-[family-name:var(--font-label)] text-xs font-semibold backdrop-blur-sm">
           {collection.book_count} Items
         </span>
       </div>
       
-      {/* Content */}
       <div className="p-5 flex-grow flex flex-col">
         <h3 className="font-headline text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors line-clamp-1">
           {collection.name}
@@ -302,7 +294,6 @@ function CollectionCard({ collection, onClick, index = 0 }: { collection: Collec
           {collection.description}
         </p>
         
-        {/* Curator info */}
         <div className="flex items-center gap-2 mt-3 pt-3 border-t border-outline-variant/20">
           <span className="material-symbols-outlined text-primary text-sm">person</span>
           <span className="text-xs text-on-surface-variant font-[family-name:var(--font-label)]">
@@ -339,14 +330,11 @@ function CreateCollectionModal({ onClose, onSuccess }: { onClose: () => void; on
   const [formData, setFormData] = useState({ name: '', description: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // State cho ảnh bìa
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // State quản lý danh sách sách được chọn
   const [selectedBooks, setSelectedBooks] = useState<Book[]>([]);
 
-  // State tìm kiếm sách
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState<Book[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -374,7 +362,6 @@ function CreateCollectionModal({ onClose, onSuccess }: { onClose: () => void; on
     return () => clearTimeout(delay);
   }, [searchTerm, selectedBooks]);
 
-  // Xử lý khi chọn ảnh
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -383,7 +370,6 @@ function CreateCollectionModal({ onClose, onSuccess }: { onClose: () => void; on
     }
   };
 
-  // Xóa ảnh đã chọn
   const handleRemoveImage = () => {
     setCoverImage(null);
     if (previewUrl) {
@@ -411,18 +397,15 @@ function CreateCollectionModal({ onClose, onSuccess }: { onClose: () => void; on
 
     setIsSubmitting(true);
     try {
-      // 1. Chuẩn bị dữ liệu dưới dạng FormData để gửi file
       const submitData = new FormData();
       submitData.append('name', formData.name);
       submitData.append('description', formData.description);
       if (coverImage) {
-        submitData.append('cover_image', coverImage); // Tên trường thường là cover_image theo Django model
+        submitData.append('cover_image', coverImage); 
       }
 
-      // 2. Tạo bộ sưu tập
       const newCollection = await collectionService.createCollection(submitData as any);
 
-      // 3. Add các sách đã chọn
       if (selectedBooks.length > 0) {
         await Promise.all(
           selectedBooks.map((book) => 
@@ -431,7 +414,6 @@ function CreateCollectionModal({ onClose, onSuccess }: { onClose: () => void; on
         );
       }
 
-      // Dọn dẹp URL blob để tránh memory leak
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       onSuccess();
     } catch (error) {
@@ -449,7 +431,6 @@ function CreateCollectionModal({ onClose, onSuccess }: { onClose: () => void; on
         
         <form id="create-collection-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto pr-2 space-y-6 custom-scrollbar">
           
-          {/* Section: Upload Ảnh bìa */}
           <div>
             <label className="block text-sm font-medium text-on-surface-variant mb-2">Ảnh bìa</label>
             {!previewUrl ? (
@@ -482,7 +463,6 @@ function CreateCollectionModal({ onClose, onSuccess }: { onClose: () => void; on
 
           <hr className="border-outline-variant/30" />
 
-          {/* Section: Thông tin cơ bản */}
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-on-surface-variant mb-1">Tên bộ sưu tập *</label>
@@ -508,7 +488,6 @@ function CreateCollectionModal({ onClose, onSuccess }: { onClose: () => void; on
 
           <hr className="border-outline-variant/30" />
 
-          {/* Section: Chọn sách */}
           <div>
             <label className="block text-sm font-medium text-on-surface-variant mb-2">Thêm sách vào bộ sưu tập</label>
             

@@ -23,7 +23,6 @@ export default function ProfilePage() {
     const fetchMyRecords = async () => {
       try {
         const data: any = await bookService.getAllBorrowRecords();
-        // API tự động chỉ trả về sách của user đang đăng nhập
         setMyRecords(Array.isArray(data) ? data : (data.results || []));
       } catch {
         addToast('Không thể tải lịch sử mượn sách', 'error');
@@ -39,7 +38,6 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 space-y-8 pb-32">
-      {/* KHU VỰC 1: THÔNG TIN CÁ NHÂN */}
       <div className="bg-surface-container-lowest p-8 rounded-3xl shadow-sm flex flex-col md:flex-row items-center gap-8 border border-outline-variant/30">
         <div className="w-24 h-24 rounded-full bg-primary-container flex items-center justify-center shadow-inner">
           <span className="text-4xl text-primary font-bold uppercase">
@@ -76,7 +74,6 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* KHU VỰC 2: LỊCH SỬ MƯỢN SÁCH - CHỈ HIỆN CHO ĐỘC GIẢ */}
       {user.role === 'reader' && (
       <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-outline-variant/30 overflow-hidden">
         <div className="p-6 border-b border-outline-variant/30">

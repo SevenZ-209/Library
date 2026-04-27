@@ -38,14 +38,20 @@ class BorrowRecordSerializer(serializers.ModelSerializer):
     borrower_phone = serializers.ReadOnlyField(source='user.phone')
     book_title = serializers.ReadOnlyField(source='book.title')
     book_id = serializers.ReadOnlyField(source='book.id')
+    book_image = serializers.SerializerMethodField()
 
     class Meta:
         model = BorrowRecord
         fields = [
             'id', 'book_id', 'borrower_name', 'borrower_phone', 'book_title',
             'borrow_date', 'due_date', 'return_date',
-            'status', 'note'
+            'status', 'note', 'book_image'
         ]
+
+    def get_book_image(self, obj):
+        if obj.book.image:
+            return obj.book.image.url
+        return None
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -121,7 +127,7 @@ class CollectionSerializer(serializers.ModelSerializer):
         model = Collection
         fields = [
             'id', 'name', 'description', 'cover_image',
-            'book_count', 'curator', 'curator_name',  # Thêm 'curator' vào đây
+            'book_count', 'curator', 'curator_name',
             'is_featured', 'created_date', 'updated_date'
         ]
 

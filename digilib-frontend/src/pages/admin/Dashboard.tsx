@@ -29,7 +29,6 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    // Redirect librarian to their default workspace
     if (user?.role === 'librarian') {
       navigate('/admin/books', { replace: true });
       return;
