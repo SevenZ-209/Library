@@ -5,7 +5,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
-from .models import User, Category, Book, BorrowRecord, Tag
+from .models import User, Category, Book, BorrowRecord, Tag, Collection, CollectionBook
 
 
 class BookModelTest(TestCase):
@@ -181,3 +181,94 @@ class CategoryAPITest(TestCase):
         response = self.client.post('/api/category/', {'name': 'Khách Vô Danh'})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(Category.objects.count(), 0)
+
+class CollectionAPITest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+        self.reader = User.objects.create_user(username='reader_col', password='123', role='reader')
+        self.librarian = User.objects.create_user(username='librarian_col', password='123', role='librarian')
+
+        self.category = Category.objects.create(name="Sách Giáo Khoa")
+        self.book1 = Book.objects.create(title="Toán 1", author="NXB GD", category=self.category, total_copies=10,
+                                         available_copies=10)
+        self.book2 = Book.objects.create(title="Văn 1", author="NXB GD", category=self.category, total_copies=5,
+                                         available_copies=5)
+
+        self.collection = Collection.objects.create(
+            name="Bộ sách lớp 1",
+            description="Tổng hợp sách giáo khoa lớp 1",
+            curator=self.librarian,
+            is_featured=True
+        )
+
+    def test_get_collections_list_allow_any(self):
+        response = self.client.get('/api/collection/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(len(response.data['results']) >= 1)
+
+    def test_get_featured_collections(self):
+        response = self.client.get('/api/collection/featured/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]['name'], "Bộ sách lớp 1")
+
+    def test_create_collection_permissions(self):
+        data = {'name': 'Sách lập trình hay', 'description': 'Test collection'}
+
+        self.client.force_authenticate(user=self.reader)
+        resp_forbidden = self.client.post('/api/collection/', data)
+        self.assertEqual(resp_forbidden.status_code, status.HTTP_403_FORBIDDEN)
+
+
+        self.client.force_authenticate(user=self.librarian)
+        resp_success = self.client.post('/api/collection/', data)
+        self.assertEqual(resp_success.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Collection.objects.count(), 2)
+        new_collection = Collection.objects.get(name='Sách lập trình hay')
+        self.assertEqual(new_collection.curator, self.librarian)
+
+    def test_add_book_to_collection_success(self):
+        self.client.force_authenticate(user=self.librarian)
+
+        response = self.client.post(
+            f'/api/collection/{self.collection.id}/add-book/',
+            {'book_id': self.book1.id}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(CollectionBook.objects.count(), 1)
+        self.assertEqual(self.collection.book_count, 1)
+
+    def test_add_duplicate_book_to_collection(self):
+        self.client.force_authenticate(user=self.librarian)
+
+        self.client.post(f'/api/collection/{self.collection.id}/add-book/', {'book_id': self.book1.id})
+
+        response = self.client.post(f'/api/collection/{self.collection.id}/add-book/', {'book_id': self.book1.id})
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('đã có trong bộ sưu tập', response.data['detail'])
+        self.assertEqual(CollectionBook.objects.count(), 1)
+
+    def test_remove_book_from_collection(self):
+
+        CollectionBook.objects.create(collection=self.collection, book=self.book1)
+
+        self.client.force_authenticate(user=self.librarian)
+
+        response = self.client.post(
+            f'/api/collection/{self.collection.id}/remove-book/',
+            {'book_id': self.book1.id}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(CollectionBook.objects.count(), 0)
+
+    def test_remove_nonexistent_book(self):
+        self.client.force_authenticate(user=self.librarian)
+
+        response = self.client.post(
+            f'/api/collection/{self.collection.id}/remove-book/',
+            {'book_id': self.book2.id}
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn('không có trong bộ sưu tập', response.data['detail'])
