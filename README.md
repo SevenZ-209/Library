@@ -332,7 +332,33 @@ Library/
     └── Dockerfile              # Kịch bản đóng gói Docker cho Frontend
 
 ```
+## 🎥 Demo
 
+### 1. Hệ thống Xác thực (Authentication)
+**Giao diện Đăng nhập và Đăng ký an toàn với JWT Authentication:**
+![Đăng nhập hệ thống](docs/screenshots/dang-nhap.png)
+![Đăng ký tài khoản](docs/screenshots/dang-ky.png)
+
+### 2. Giao diện Độc giả (Reader)
+**Trang chủ (Khám phá sách & Sách thịnh hành):**
+![Trang chủ DigiLib](docs/screenshots/trang-chu.jpg)
+
+**Trang Chi tiết Sách & Các Bộ sưu tập nổi bật:**
+![Chi tiết sách](docs/screenshots/chi-tiet-sach.jpg)
+![Bộ sưu tập](docs/screenshots/collection.jpg)
+
+**Tủ sách cá nhân (Quản lý sách đang mượn & Lịch sử):**
+![Lịch sử mượn sách](docs/screenshots/archive.jpg)
+
+### 3. Giao diện Quản trị (Admin & Librarian)
+**Dashboard Thống kê tổng quan:**
+![Admin Dashboard](docs/screenshots/admin-dashboard.png)
+
+**Quản lý Kho sách (Thêm/Sửa/Xóa):**
+![Quản lý Sách](docs/screenshots/quan-ly-sach.png)
+
+**Quản lý Mượn/Trả sách & Duyệt phiếu mượn:**
+![Quản lý Mượn trả](docs/screenshots/thu-thu-muon-tra.png)
 
 ## ⚙️ Tính năng nổi bật
 
