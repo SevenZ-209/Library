@@ -1,4 +1,3 @@
-version: '3.9'
 
 # ============================================================
 # DigiLib - Docker Compose
@@ -60,12 +59,12 @@ services:
   # ----------------------------------------------------------
   backend:
     build:
-      context: ./DigiLib
+      context: ./backend
       dockerfile: Dockerfile
     container_name: digilib_backend
     restart: unless-stopped
     env_file:
-      - ./DigiLib/.env
+      - ./backend/.env
     environment:
       # Database
       DB_HOST: db
@@ -80,7 +79,7 @@ services:
       ALLOWED_HOSTS: "*"
       DEBUG: ${DEBUG:-True}
     volumes:
-      - ./DigiLib:/app               # hot-reload trong dev
+      - ./backend:/app               # hot-reload trong dev
       - media_data:/app/media
     ports:
       - "8000:8000"
@@ -100,12 +99,12 @@ services:
   # ----------------------------------------------------------
   celery_worker:
     build:
-      context: ./DigiLib
+      context: ./backend
       dockerfile: Dockerfile
     container_name: digilib_celery_worker
     restart: unless-stopped
     env_file:
-      - ./DigiLib/.env
+      - ./backend/.env
     environment:
       DB_HOST: db
       DB_PORT: 3306
@@ -115,7 +114,7 @@ services:
       CELERY_BROKER_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672//
       DJANGO_SETTINGS_MODULE: DigiLib.settings
     volumes:
-      - ./DigiLib:/app
+      - ./backend:/app
       - media_data:/app/media
     depends_on:
       db:
@@ -131,12 +130,12 @@ services:
   # ----------------------------------------------------------
   celery_beat:
     build:
-      context: ./DigiLib
+      context: ./backend
       dockerfile: Dockerfile
     container_name: digilib_celery_beat
     restart: unless-stopped
     env_file:
-      - ./DigiLib/.env
+      - ./backend/.env
     environment:
       DB_HOST: db
       DB_PORT: 3306
@@ -146,7 +145,7 @@ services:
       CELERY_BROKER_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672//
       DJANGO_SETTINGS_MODULE: DigiLib.settings
     volumes:
-      - ./DigiLib:/app
+      - ./backend:/app
     depends_on:
       db:
         condition: service_healthy
@@ -177,13 +176,13 @@ services:
   # ----------------------------------------------------------
   test_runner:
     build:
-      context: ./DigiLib
+      context: ./backend
       dockerfile: Dockerfile
     container_name: digilib_test_runner
     profiles:
       - test
     env_file:
-      - ./DigiLib/.env
+      - ./backend/.env
     environment:
       DB_HOST: db
       DB_PORT: 3306
@@ -193,7 +192,7 @@ services:
       CELERY_BROKER_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672//
       DJANGO_SETTINGS_MODULE: DigiLib.settings
     volumes:
-      - ./DigiLib:/app
+      - ./backend:/app
     depends_on:
       db:
         condition: service_healthy

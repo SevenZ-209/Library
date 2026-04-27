@@ -4,12 +4,12 @@ on:
   push:
     branches: [ "main", "master", "feat/*" ]
     paths:
-      - 'DigiLib/**'
+      - 'backend/**'
       - '.github/workflows/backend-ci.yml'
   pull_request:
     branches: [ "main", "master" ]
     paths:
-      - 'DigiLib/**'
+      - 'backend/**'
 
 jobs:
   test-backend:
@@ -41,13 +41,13 @@ jobs:
         cache: 'pip'
 
     - name: Install Dependencies
-      working-directory: ./DigiLib
+      working-directory: ./backend
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
     - name: Run Django Tests
-      working-directory: ./DigiLib
+      working-directory: ./backend
       env:
         DB_NAME: librarydb_test
         DB_USER: root

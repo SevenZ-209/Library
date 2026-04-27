@@ -204,7 +204,7 @@ from celery.schedules import crontab
 CELERY_BEAT_SCHEDULE = {
     'check_overdue_books_every_minute': {
         'task': 'digilib_core.tasks.check_overdue_books_and_notify',
-        'schedule': crontab(minute=0, hour=8),   
+        'schedule': crontab(minute=0, hour=8),
         },
 }
 
@@ -215,4 +215,3 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-
