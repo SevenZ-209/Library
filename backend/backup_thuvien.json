@@ -24,7 +24,7 @@
         "model": "digilib_core.user",
         "pk": 2,
         "fields": {
-            "password": "1",
+            "password": "pbkdf2_sha256$1200000$aALUszFzqI2MU5dZ57eJdS$bndtz1Mxpv2lNCqqTnN3Obgggs16Nefxk7dX4ob2oGc=",
             "last_login": null,
             "is_superuser": false,
             "username": "lekhoa",
@@ -86,9 +86,9 @@
         "model": "digilib_core.category",
         "pk": 1,
         "fields": {
-          "active": true,
-        "created_date": "2026-04-20T16:20:00Z",
-        "updated_date": "2026-04-20T16:20:00Z",
+            "active": true,
+            "created_date": "2026-04-20T16:20:00Z",
+            "updated_date": "2026-04-20T16:20:00Z",
             "name": "Tiểu thuyết"
         }
     },
@@ -96,9 +96,9 @@
         "model": "digilib_core.category",
         "pk": 2,
         "fields": {
-          "active": true,
-        "created_date": "2026-04-20T16:20:00Z",
-        "updated_date": "2026-04-20T16:20:00Z",
+            "active": true,
+            "created_date": "2026-04-20T16:20:00Z",
+            "updated_date": "2026-04-20T16:20:00Z",
             "name": "Ngôn tình"
         }
     },
@@ -106,30 +106,30 @@
         "model": "digilib_core.category",
         "pk": 3,
         "fields": {
-          "active": true,
-          "created_date": "2026-04-20T16:20:00Z",
-          "updated_date": "2026-04-20T16:20:00Z",
-          "name": "Tiếng Anh"
+            "active": true,
+            "created_date": "2026-04-20T16:20:00Z",
+            "updated_date": "2026-04-20T16:20:00Z",
+            "name": "Tiếng Anh"
         }
     },
     {
         "model": "digilib_core.category",
         "pk": 4,
         "fields": {
-          "active": true,
-          "created_date": "2026-04-20T16:20:00Z",
-          "updated_date": "2026-04-20T16:20:00Z",
-          "name": "Manga"
+            "active": true,
+            "created_date": "2026-04-20T16:20:00Z",
+            "updated_date": "2026-04-20T16:20:00Z",
+            "name": "Manga"
         }
     },
     {
         "model": "digilib_core.category",
         "pk": 5,
         "fields": {
-          "active": true,
-          "created_date": "2026-04-20T16:20:00Z",
-          "updated_date": "2026-04-20T16:20:00Z",
-          "name": "Kinh tế"
+            "active": true,
+            "created_date": "2026-04-20T16:20:00Z",
+            "updated_date": "2026-04-20T16:20:00Z",
+            "name": "Kinh tế"
         }
     },
     {
@@ -397,7 +397,7 @@
         "model": "digilib_core.user",
         "pk": 10,
         "fields": {
-            "password": "1",
+            "password": "pbkdf2_sha256$1200000$aALUszFzqI2MU5dZ57eJdS$bndtz1Mxpv2lNCqqTnN3Obgggs16Nefxk7dX4ob2oGc=",
             "last_login": null,
             "is_superuser": false,
             "username": "doc_gia_test",
